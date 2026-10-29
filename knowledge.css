@@ -1,0 +1,20 @@
+#interact {
+  display: none;
+  position: absolute;
+  z-index: 5;
+  right: 24px;
+  bottom: 34px;
+  min-height: 52px;
+  padding: 0 18px;
+  border: 3px solid #e6c26e;
+  border-radius: 8px;
+  background: #382522ed;
+  color: #fff0c8;
+  font: bold 15px Georgia, serif;
+  box-shadow: 0 4px 0 #1c1415, 0 0 18px #f5c46155;
+  touch-action: manipulation;
+}
+#interact:not([hidden]) { display: block; }
+@media (pointer: coarse), (max-width: 800px) {
+  #interact { right: 18px; bottom: 28px; min-height: 58px; font-size: 16px; }
+}
