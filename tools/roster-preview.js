@@ -3,7 +3,7 @@
  const h=heroPreview,c=document.querySelector('#game'),g=c.getContext('2d'),query=new URLSearchParams(location.search);
  h.setSound(false);window.addEventListener('error',e=>document.documentElement.dataset.rosterError=e.message);
  const mode=query.get('mode');
- const fixed=['bosses','characters','pixels'].includes(mode);
+ const fixed=['bosses','characters','pixels','enemies','enemy-pixels'].includes(mode);
  c.style.width=mode==='mobile'?'360px':fixed?'1200px':'100vw';
  c.style.height=mode==='mobile'?'740px':fixed?'800px':'100vh';
  window.dispatchEvent(new Event('resize'));
@@ -33,6 +33,7 @@
    const boss=h.spawnEnemy(kind);Object.assign(boss,{x:-450,y:-150,cd:0,summon:0});boss.hp=boss.maxHp*.4;game.boss=boss;game.bossWave=true;
    if(i===0)h.update(.01);else BossSystem.update(game,boss,.01,1,api);
    game.time=.25;
+   EnemySprites.tick(game);
    if(i===0)for(const shot of game.hostile){shot.x+=shot.vx*.25;shot.y+=shot.vy*.25}
    g.save();g.beginPath();g.rect(i*300,0,298,800);g.clip();g.translate(i*300,0);
    h.drawWorld();g.fillStyle='#111922df';g.fillRect(0,0,298,95);
@@ -106,7 +107,59 @@
   characters();document.documentElement.dataset.pixelChecks=String(checks);
   document.documentElement.dataset.pixelResult='passed';
  }
- if(mode==='pixels'){pixels()}
+ function enemyRoster(){
+  h.newGame();const game=h.game;game.time=1;
+  const entries=Object.entries(EnemySprites.profiles).map(([id,p])=>{
+   const e=h.spawnEnemy(id);Object.assign(e,{x:-600,y:-400,anim:1.7,hit:0,facing:1,hp:1000,maxHp:1000});return {id,p,e};
+  });
+  return {game,entries};
+ }
+ function enemies(){
+  const {game,entries}=enemyRoster();
+  g.setTransform(1,0,0,1,0,0);g.imageSmoothingEnabled=false;g.fillStyle='#191f28';g.fillRect(0,0,1200,800);
+  entries.forEach(({p,e},i)=>{
+   const x=i%5*240,y=Math.floor(i/5)*400;
+   g.fillStyle='#242b32';g.fillRect(x+5,y+5,230,390);
+   g.textAlign='center';g.fillStyle=p.eye;g.font='bold 15px Georgia';g.fillText(p.name,x+120,y+29);
+   e.visualState='walk';if(p.boss)e.hp=e.maxHp*.4;
+   g.save();g.translate(x+120,y+211);g.scale(2,2);h.drawEnemy(e);g.restore();
+   g.textAlign='left';g.fillStyle='#bcb8a5';g.font='11px Georgia';g.fillText(p.boss?'2× · ENFURECIDO':'2× · CAMINHADA',x+12,y+85);
+   e.visualState='idle';e.hp=e.maxHp;
+   g.save();g.translate(x+120,y+350);h.drawEnemy(e);g.restore();
+   g.fillText('1×',x+22,y+340);
+  });document.documentElement.dataset.enemyPreview='passed';
+ }
+ function enemyPixels(){
+  const {game,entries}=enemyRoster();let checks=0;
+  const assert=(ok,msg)=>{if(!ok)throw Error(msg);checks++};
+  for(const {id,p,e} of entries)for(const state of ['idle','walk','attack','hurt','enraged'])for(const facing of [-1,1]){
+   e.visualState=state;e.facing=facing;e.hit=state==='hurt'?.12:0;e.hp=state==='enraged'&&p.boss?400:1000;
+   g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,1200,800);
+   g.save();g.translate(80,104);h.drawEnemy(e);g.restore();
+   const native=g.getImageData(0,0,160,160).data;
+   assert(native.some((v,i)=>i%4===3&&v===255),id+': empty native art');
+   for(const scale of [2,4]){
+    g.save();g.translate(400,100);g.scale(scale,scale);g.translate(80,104);h.drawEnemy(e);g.restore();
+    const big=g.getImageData(400,100,160*scale,160*scale).data;let equal=true;
+    for(let y=0;y<160*scale&&equal;y++)for(let x=0;x<160*scale&&equal;x++)for(let k=0;k<4;k++){
+     if(big[(y*160*scale+x)*4+k]!==native[(Math.floor(y/scale)*160+Math.floor(x/scale))*4+k]){equal=false;break}
+    }
+    assert(equal,id+': pixel grid differs at '+scale+'x in '+state);g.clearRect(400,100,640,640);
+   }
+  }
+  // Actual Canvas workload: 70 ordinary enemies per frame, no Canvas mocks.
+  const start=performance.now();
+  for(let frame=0;frame<30;frame++)for(let i=0;i<70;i++){
+   const e=entries[i%6].e;e.visualState='walk';e.hit=0;g.save();g.translate(80+i%10*110,100+Math.floor(i/10)*95);h.drawEnemy(e);g.restore();
+  }
+  const ms=(performance.now()-start)/30;
+  enemies();document.documentElement.dataset.enemyPixelChecks=String(checks);
+  document.documentElement.dataset.enemyFrameMs=ms.toFixed(2);
+  document.documentElement.dataset.enemyPixels='passed';
+ }
+ if(mode==='enemy-pixels'){enemyPixels();window.addEventListener('resize',enemies)}
+ else if(mode==='enemies'){enemies();window.addEventListener('resize',enemies)}
+ else if(mode==='pixels'){pixels()}
  else if(mode==='characters'){characters();window.addEventListener('resize',characters)}
  else if(mode==='play'){smoke();window.addEventListener('resize',smoke)}
  else if(mode==='bosses'){bosses();window.addEventListener('resize',bosses)}

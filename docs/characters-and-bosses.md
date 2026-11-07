@@ -1,5 +1,9 @@
 # Forasteiros e novos chefes
 
+Os seis inimigos comuns e quatro chefes agora compartilham o módulo de arte
+procedural `js/enemy_sprites.js`. Veja [redesign dos oponentes](enemy-pixel-art.md)
+para camadas, animações, fases, avisos corrigidos, limites e previews dos dez tipos.
+
 ## Seleção de personagem
 
 **Jogar** e **Enter** na tela inicial abrem a seleção antes de iniciar a partida.
@@ -64,9 +68,10 @@ invocações. O módulo limita avisos pendentes a 24 e não dispara novas salvas
 já houver 220 projéteis hostis. Recompensas permanecem uma gema de XP de chefe
 e um baú por derrota. A morte por elementos também entrega esses prêmios.
 
-`js/bosses.js` concentra perfis, rotação, movimento, ataques, avisos e arte dos
-três novos encontros. `js/main.js` mantém a IA original dos demais inimigos e do
-Xerife, integra os encontros e contabiliza mortes/recompensas.
+`js/bosses.js` concentra perfis, rotação, movimento, ataques e avisos dos três
+novos encontros. `js/enemy_sprites.js` concentra a arte e as animações dos dez
+oponentes. `js/main.js` mantém a IA original dos demais inimigos e do Xerife,
+integra os encontros e contabiliza mortes/recompensas.
 
 ## Verificação
 

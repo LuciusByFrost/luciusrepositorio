@@ -1,5 +1,8 @@
 # Cactus Survivors: O Último Cacto do Oeste
 
+Os seis inimigos comuns e os quatro chefes têm pixel art própria, animações em
+camadas e aparências enfurecidas. Veja [arte dos oponentes, avisos e previews](docs/enemy-pixel-art.md).
+
 Jogo de sobrevivência 2D feito com HTML, CSS e JavaScript puro. Não usa bibliotecas, imagens externas ou servidor.
 
 Agora possui **quatro árvores elementais** (Fogo, Gelo, Eletricidade e Veneno),
