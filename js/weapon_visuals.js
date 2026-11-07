@@ -3,7 +3,7 @@
 const WeaponVisuals=(()=>{
  'use strict';
  const TAU=Math.PI*2,clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
- function pixel(g,c,x,y,w=2,h=w){g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),w,h)}
+ function pixel(g,c,x,y,w=2,h=w){g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),Math.max(1,Math.round(w)),Math.max(1,Math.round(h)))}
  function ring(g,x,y,r,c,phase=0,flat=1,count=32){
   for(let i=0;i<count;i++){const a=i*TAU/count+phase;pixel(g,c,x+Math.cos(a)*r,y+Math.sin(a)*r*flat,2)}
  }
@@ -25,6 +25,12 @@ const WeaponVisuals=(()=>{
    pixel(g,'#adb598',1-a.pulse*2,-7-a.pulse,2,2);
    pixel(g,'#d6c08a',3+Math.round(a.pulse*3),-3,1,2);
   }else if(id==='shotgun'){
+   // Twin cut barrels, receiver rivets and worn walnut; endpoints and muzzle
+   // remain aligned with the existing shot animation and ballistic events.
+   pixel(g,'#87938e',8,-4,16,1);pixel(g,'#1c252b',25,-4,3,7);
+   pixel(g,'#a9ada0',25,-3,2,1);pixel(g,'#87938e',9,0,16,1);
+   pixel(g,'#24262b',3,-3,5,5);pixel(g,'#b5a67f',4,-2,1,1);
+   pixel(g,'#bb905c',-4,-1,2,3);pixel(g,'#49362d',-3,3,2,2);
    pixel(g,'#241f23',6+a.pump,2,8,4);pixel(g,'#936840',7+a.pump,2,6,2);
    pixel(g,'#cfaa70',8+a.pump,2,1,2);pixel(g,'#cfaa70',11+a.pump,2,1,2);
   }else if(id==='dynamite'){

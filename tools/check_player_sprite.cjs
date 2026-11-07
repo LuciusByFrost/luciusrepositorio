@@ -41,6 +41,16 @@ for(const facing of [-1,1])for(const weapon of Object.keys(now.p.game.weapons))f
 }
 assert.equal(JSON.stringify(p),snapshot,'drawing mutated the player');
 assert.equal(now.stats().created,created,'renderer allocated new canvases');
+// Every roster geometry must support every acquired weapon, not only its starter.
+for(const hero of vm.runInContext('CharacterRoster.list',now.s)){
+ for(const facing of [-1,1])for(const weapon of Object.keys(now.p.game.weapons))for(const angle of [0,Math.PI/2,Math.PI,-Math.PI/2]){
+  for(const state of [{},{visualMoving:true,visualStride:Math.PI/2},{attack:.09,muzzleFlash:.05},{invuln:1}]){
+   const sample={...p,characterId:hero.id,startWeapon:hero.weapon,heldWeapon:weapon,facing,weaponAngle:angle,...state},before=JSON.stringify(sample);
+   now.p.drawPlayer(sample);assert.equal(JSON.stringify(sample),before,'character drawing mutated its pose');
+  }
+ }
+}
+assert.equal(now.stats().created,created,'roster/weapon poses allocated canvases');
 const pose=vm.runInContext('CactusHero.pose',now.s);
 assert.equal(pose({...p,visualMoving:false},1).step,0);
 assert.notEqual(pose({...p,visualMoving:false},0).bob,pose({...p,visualMoving:false},.5).bob);
@@ -128,7 +138,7 @@ console.log('PASS: all 8 weapons overlap for 120 frames, normal and evolved; gam
 
 // Optional self-contained browser inspection page, including the real game renderer.
 if(process.argv.includes('--preview')){
- const expose=current.replaceAll('requestAnimationFrame(frame)','void 0').replace(/\}\)\(\);\s*$/,`window.heroPreview={newGame,openChest,awardKnowledgeReward,answerKnowledgeQuestion,interactWithKnowledgeChest,closeKnowledgePanel,draw,drawHUD,drawCharacterSelect,openCharacterSelect,shootHostile,hurtPlayer,drawWorld,drawPlayer,drawEnemy,drawUpgrade,openUpgrades,pickUpgrade,damageEnemy,update,drawLassoEffects,drawProjectileSprite,spawnEnemy,fireWeapon,setGame:g=>game=g,setSound:on=>audioOn=on,get game(){return game},setScreen:s=>screen=s};})();`);
+ const expose=current.replaceAll('requestAnimationFrame(frame)','void 0').replace(/\}\)\(\);\s*$/,`window.heroPreview={newGame,openChest,awardKnowledgeReward,answerKnowledgeQuestion,interactWithKnowledgeChest,closeKnowledgePanel,draw,drawHUD,drawCharacterSelect,drawCharacterPreview,openCharacterSelect,shootHostile,hurtPlayer,drawWorld,drawPlayer,drawEnemy,drawUpgrade,openUpgrades,pickUpgrade,damageEnemy,update,drawLassoEffects,drawProjectileSprite,spawnEnemy,fireWeapon,setGame:g=>game=g,setSound:on=>audioOn=on,get game(){return game},setScreen:s=>screen=s};})();`);
  const scripts=['js/network_questions.js','js/knowledge_chests.js','js/characters.js','js/player_sprite.js','js/weapon_visuals.js','js/elements.js','js/element_visuals.js','js/bosses.js','js/chests.js'].map(f=>fs.readFileSync(f,'utf8')).join('\n');
  const html=`<!doctype html><meta charset="utf-8"><style>body{margin:0;background:#242a32}canvas{width:1200px;height:800px;image-rendering:pixelated}#touch,#toast,#interact{display:none}</style><canvas id="game"></canvas><div id="touch"><i></i></div><div id="toast"></div><button id="interact"></button><script>window.onerror=(m,u,l)=>{document.body.insertAdjacentHTML('beforeend','<pre style="color:white;position:fixed;top:0">'+m+' at '+l+'</pre>')};</script><script>${scripts}\n${expose}\nfunction paintPreview(){const c=document.querySelector('canvas'),g=c.getContext('2d'),h=heroPreview;h.newGame();h.game.time=1;h.drawWorld();const p=h.game.player;g.fillStyle='#242a32';g.fillRect(0,0,1200,800);g.fillStyle='#e5ce9e';g.font='20px monospace';g.fillText('CACTO PISTOLEIRO / camadas Canvas / escala real e 4x',30,36);const cases=[['Idle',{attack:0}],['Walk',{visualMoving:true,visualStride:Math.PI/2}],['Attack',{attack:.09,muzzleFlash:.05}],['Hurt',{invuln:1}],['Aim left',{weaponAngle:Math.PI,facing:1}],['Shotgun',{heldWeapon:'shotgun',weaponAngle:-.7}]];cases.forEach(([name,a],i)=>{g.save();g.translate(90+(i%3)*390,180+Math.floor(i/3)*350);h.drawPlayer({...p,x:-600,y:-400,...a});g.translate(130,70);g.scale(4,4);h.drawPlayer({...p,x:-600,y:-400,...a});g.restore();g.fillStyle='#e5ce9e';g.fillText(name,30+(i%3)*390,70+Math.floor(i/3)*350)});}paintPreview();window.addEventListener('resize',paintPreview);</script>`;
  const output=process.argv.includes('--map')?html.replace("paintPreview();window.addEventListener('resize',paintPreview);",`function paintMap(){heroPreview.newGame();heroPreview.game.time=1;heroPreview.drawWorld();const g=document.querySelector('canvas').getContext('2d');g.fillStyle='#e5ce9e';g.font='18px monospace';g.textAlign='left';g.fillText('Estrada de terra / terreno noturno / cactos esparsos',24,30)}paintMap();window.addEventListener('resize',paintMap);`):html;

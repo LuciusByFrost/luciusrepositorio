@@ -1,4 +1,4 @@
-/* Starter loadouts and cached-sprite palettes. All characters keep the same
+/* Starter loadouts and material palettes for individually authored geometry. All characters keep the same
    base attributes; weapons, upgrades and elemental trees remain available. */
 const CharacterRoster=(()=>{
  'use strict';
@@ -41,18 +41,20 @@ const CharacterRoster=(()=>{
   g.textAlign='center';g.fillStyle='#efd5a0';g.font=`bold ${Math.min(32,W*.055)}px Georgia`;g.fillText('ESCOLHA SEU FORASTEIRO',W/2,H*.09);
   g.fillStyle='#b7b8ac';g.font=`${Math.min(14,W*.029)}px Georgia`;g.fillText('Uma arma inicial. Todas as builds continuam abertas.',W/2,H*.14);
   l.cards.forEach((r,i)=>{
-   const c=list[i],picked=c.id===selected,compact=r.h<315||r.w<185,small=r.w<185;
+   const c=list[i],picked=c.id===selected,compact=r.h<315||r.w<185,small=r.w<185,short=r.h<190;
    g.save();g.beginPath();g.rect(r.x,r.y,r.w,r.h);g.clip();
    g.fillStyle=picked?'#37352d':'#252b31';g.fillRect(r.x,r.y,r.w,r.h);
    g.strokeStyle=picked?c.color:'#50534e';g.lineWidth=picked?3:1;g.strokeRect(r.x+1,r.y+1,r.w-2,r.h-2);
-   g.fillStyle=c.color;g.fillRect(r.x+5,r.y+5,r.w-10,2);g.font=`bold ${small?10:11}px Georgia`;
-   g.fillText((picked?'◆ ':'')+'['+(i+1)+'] '+c.role,r.x+r.w/2,r.y+21);
-   const scale=!compact&&r.w>=200?2:1,heroY=r.y+(compact?70:132);
+   g.fillStyle=c.color;g.fillRect(r.x+5,r.y+5,r.w-10,2);g.font=`bold ${small?9:11}px Georgia`;
+   wrap(g,(picked?'◆ ':'')+'['+(i+1)+'] '+c.role,r.x+r.w/2,r.y+18,r.w-16,11,2);
+   const scale=!compact&&r.w>=200?2:1,heroY=r.y+(short?r.h-83:compact?80:132);
    preview(c,r.x+r.w/2-(scale===2?12:5),heroY,scale,t);
-   g.fillStyle='#eee0bb';g.font=`bold ${small?13:17}px Georgia`;
-   const nameY=compact?108:190,nameHeight=wrap(g,c.name,r.x+r.w/2,r.y+nameY,r.w-16,small?16:19,2);
+   g.fillStyle='#eee0bb';g.font=`bold ${small?12:17}px Georgia`;
+   const nameY=short?r.h-48:compact?124:190,nameHeight=wrap(g,c.name,r.x+r.w/2,r.y+nameY,r.w-16,small?14:19,short?1:2);
+   g.fillStyle='#c5bdab';g.font=`italic ${small?9:11}px Georgia`;
+   const titleY=nameY+nameHeight+1,titleHeight=wrap(g,c.title,r.x+r.w/2,r.y+titleY,r.w-18,short?11:14,2);
    g.fillStyle=c.color;g.font=`${small?10:12}px Georgia`;
-   const weaponY=nameY+nameHeight+10,weaponHeight=wrap(g,weapons[c.weapon].name,r.x+r.w/2,r.y+weaponY,r.w-18,14,2),descY=weaponY+weaponHeight+14;
+   const weaponY=titleY+titleHeight+(short?2:8),weaponHeight=wrap(g,weapons[c.weapon].name,r.x+r.w/2,r.y+weaponY,r.w-18,14,short?1:2),descY=weaponY+weaponHeight+10;
    if(descY+16<r.h-8){g.fillStyle='#bdb8a8';g.font=`${small?11:12}px Georgia`;wrap(g,c.desc,r.x+r.w/2,r.y+descY,r.w-26,16,Math.min(3,Math.floor((r.h-descY-8)/16)))}
    g.restore();
   });
