@@ -10,7 +10,7 @@ function boot(options={}){
  const box={console,Math:math,performance:{now:()=>1000},localStorage:{getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,value)},requestAnimationFrame(){},
   addEventListener:(type,fn)=>(events[type]||=[]).push(fn),document:{querySelector:()=>element(),createElement:()=>{created++;return element()}}};
  box.window=box;vm.createContext(box);
- for(const file of ['network_questions','knowledge_chests','characters','player_sprite','weapon_visuals','elements','element_visuals','enemy_sprites','bosses','chests'])vm.runInContext(fs.readFileSync(`js/${file}.js`,'utf8'),box);
+ for(const file of ['network_questions','knowledge_chests','characters','../assets/characters/nopal/atlas','nopal_sprite','../assets/characters/rosa/atlas','rosa_sprite','../assets/characters/bento/atlas','bento_sprite','player_sprite','weapon_visuals','elements','element_visuals','enemy_sprites','bosses','chests'])vm.runInContext(fs.readFileSync(`js/${file}.js`,'utf8'),box);
  const api='newGame,update,draw,drawWorld,drawTitle,drawHUD,drawUpgrade,drawCharacterSelect,drawCharacterPreview,damageEnemy,fireWeapon,spawnEnemy,shootHostile,hurtPlayer,openUpgrades,pickUpgrade,openChest,grantChestXP,answerKnowledgeQuestion,drawKnowledgePanel,awardKnowledgeReward,interactWithKnowledgeChest,closeKnowledgePanel,upgradeLayout,handleClick,handleGameKeyDown,openCharacterSelect,handleCharacterClick,resize,keys';
  const source=(options.mainSource||fs.readFileSync('js/main.js','utf8')).replace(/\}\)\(\);\s*$/,`globalThis.testGame={${api},get game(){return game},get screen(){return screen},get selected(){return selectedCharacterId},setScreen:s=>screen=s};})();`);
  vm.runInContext(source,box);if(options.autoStart!==false)box.testGame.newGame();

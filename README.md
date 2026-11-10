@@ -41,6 +41,14 @@ Veja [recompensas dos baús](docs/chests.md). Teste: `node tools/check_chests.cj
 
 Abra `index.html` diretamente em um navegador moderno. Os scripts são clássicos e locais para permitir o uso por `file://`. O áudio sintetizado começa após a primeira interação, conforme as regras do navegador.
 
+Use o arquivo na raiz **`luciusbyfroty/index.html`**, junto de `assets/` e `js/`.
+A antiga entrada `luciusrepositorio/index.html` agora encaminha para ele. Se usar
+Live Server ou outro servidor local, abra a pasta `luciusbyfroty` como raiz do
+servidor. Após atualizar uma aba já aberta, use **Ctrl+F5**.
+
+Os sprites PNG do Nopal, Rosa e Bento aparecem na seleção e na partida. Veja a
+[correção das entradas e a verificação no navegador](docs/sprite-loading.md).
+
 ## Controles
 
 - **WASD** ou **setas**: mover.
@@ -75,11 +83,29 @@ Os ataques são automáticos. Movimente-se para posicionar o cacto, desviar e re
 - As opções limitam-se a alternar efeitos sonoros; não há trilha musical.
 - O cenário é uma arena procedural extensa, sem transição entre mapas ou prédios exploráveis.
 - As evoluções de armas são concedidas por baús comuns quando os requisitos de nível são atendidos.
-- Sprites e cenários são desenhados por código; não há spritesheets ou animação quadro a quadro.
+- Cenários e Íris usam arte procedural; Nopal, Rosa e Bento usam spritesheets locais com fallback procedural.
 
 ## Expansões recomendadas
 
 Adicionar mais chefes e padrões, itens passivos que habilitem evoluções, biomas exploráveis, opções de acessibilidade e uma trilha original opcional.
+
+## Nopal: spritesheet local
+
+Nopal usa agora o PNG local normalizado em 16 quadros, com pés alinhados, alpha
+real, braço/revólver separado para mira e fallback para a arte anterior. Os outros
+forasteiros mantêm a arte atual. Veja [integração, prévia e verificações do Nopal](docs/nopal-spritesheet.md).
+
+A seção abaixo descreve a arte procedural preservada como fallback.
+
+Rosa agora é uma pistoleira réptil do deserto, com spritesheet local, pés
+alinhados e disparo ligado ao tiro real da espingarda. Ela reutiliza a estrutura
+do Nopal. Veja [integração, prévia e verificações da Rosa](docs/rosa-spritesheet.md).
+
+Bento usa agora uma folha de ações e outra de caminhada em **oito direções**.
+Ao parar, conserva a orientação; o arremesso acompanha o lançamento real da
+dinamite. Os originais foram preservados. Veja [arquivos, recortes e verificações
+do Bento](docs/bento-spritesheet.md). Não há PNG da Íris na pasta dela, e sua
+aparência atual continua funcionando.
 
 ## Protagonista: cacto pistoleiro
 

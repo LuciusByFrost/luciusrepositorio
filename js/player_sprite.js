@@ -326,6 +326,9 @@ const CactusHero = (() => {
   ctx.restore();
  }
  function draw(ctx,p,x,y,t){
+  if(typeof NopalSprite!=='undefined'&&NopalSprite.draw(ctx,p,x,y,t))return;
+  if(typeof RosaSprite!=='undefined'&&RosaSprite.draw(ctx,p,x,y,t))return;
+  if(typeof BentoSprite!=='undefined'&&BentoSprite.draw(ctx,p,x,y,t))return;
   const a=pose(p,t),face=p.facing<0?-1:1,hero=CharacterRoster.get(p.characterId).id;
   ctx.save();ctx.imageSmoothingEnabled=false;ctx.translate(Math.round(x),Math.round(y));
   ctx.fillStyle='#10172099';ctx.fillRect(-14,17,28,5);ctx.fillRect(-18,18,36,3);

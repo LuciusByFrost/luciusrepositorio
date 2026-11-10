@@ -1,3 +1,15 @@
 player-preview.generated.html
+nopal-preview.generated.html
+nopal-source-guide.generated.png
+nopal-*.generated.html
+nopal-*.generated.log
+rosa-*.generated.html
+rosa-*.generated.log
+rosa-source-guide.generated.png
+entrypoints.generated.out
+entrypoints.generated.log
+bento-walk-?.png
+bento-idle-?.png
+bento-action-?.png
 legacy-game-backup/
 enemy-baseline.generated.js
