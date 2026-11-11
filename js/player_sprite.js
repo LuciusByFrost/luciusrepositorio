@@ -302,7 +302,7 @@ const CactusHero = (() => {
   return {x:Math.round(Math.cos(angle)*15+face*(a.sway-(a.hurt?1:0))),
    y:Math.round(-5+Math.sin(angle)*4+a.bob+a.handDrop)};
  }
- function drawReach(ctx,p,x,y,t,angle,anim){
+ function drawReach(ctx,p,x,y,t,angle,anim,colorOverride){
   const a=pose(p,t),m=mount(p,t,angle),face=p.facing<0?-1:1;
   const local=Math.atan2(Math.sin(angle),Math.cos(angle)*face)+anim.turn;
   const hx=m.x+face*(-anim.kick*Math.cos(local)-anim.lift*Math.sin(local));
@@ -310,7 +310,7 @@ const CactusHero = (() => {
   const ax=face*(a.sway+9),ay=-7+a.bob;
   ctx.save();ctx.imageSmoothingEnabled=false;
   if(p.invuln>0&&Math.floor(p.invuln*14)%2)ctx.globalAlpha=.55;
-  const color=skinRamps[CharacterRoster.get(p.characterId).id][1];
+  const color=colorOverride||skinRamps[CharacterRoster.get(p.characterId).id][1];
   // A bent elbow with square, one-pixel staircase edges instead of a straight
   // chain of overlapping stamps. Paint the complete outline before its fill.
   const ex=Math.round(ax+(hx-ax)*.45),ey=Math.round(Math.max(ay,hy)+3);
@@ -328,6 +328,7 @@ const CactusHero = (() => {
  function draw(ctx,p,x,y,t){
   if(typeof NopalSprite!=='undefined'&&NopalSprite.draw(ctx,p,x,y,t))return;
   if(typeof RosaSprite!=='undefined'&&RosaSprite.draw(ctx,p,x,y,t))return;
+  if(typeof IrisSprite!=='undefined'&&IrisSprite.draw(ctx,p,x,y,t))return;
   if(typeof BentoSprite!=='undefined'&&BentoSprite.draw(ctx,p,x,y,t))return;
   const a=pose(p,t),face=p.facing<0?-1:1,hero=CharacterRoster.get(p.characterId).id;
   ctx.save();ctx.imageSmoothingEnabled=false;ctx.translate(Math.round(x),Math.round(y));

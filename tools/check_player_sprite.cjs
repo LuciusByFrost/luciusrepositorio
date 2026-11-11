@@ -3,11 +3,12 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const {execFileSync}=require('node:child_process');
 const current=fs.readFileSync('js/main.js','utf8');
-// Compare unrelated mechanics at the explicitly approved dynamite balance.
+// Compare unrelated mechanics at the approved dynamite and enemy XP balance.
 const baseline=execFileSync('git',['show','HEAD:js/main.js'],{encoding:'utf8'})
  .replace(/dynamite:\{[^\n]+/,current.match(/dynamite:\{[^\n]+/)[0])
  .replace('const radius=74*game.player.area','const radius=110*game.player.area')
- .replace('pierce:0,invuln:0','pierce:0,area:1,invuln:0');
+ .replace('pierce:0,invuln:0','pierce:0,area:1,invuln:0')
+ .replace('r:value>10?9:5,value,color:','r:value>10?9:5,value:Math.min(Number.MAX_SAFE_INTEGER,Math.round(value*1.20**(g.level-1))),color:');
 function boot(source){
  let seed=42,created=0,draws=0;
  const math=Object.create(Math);math.random=()=>((seed=seed*16807%2147483647)-1)/2147483646;
@@ -22,7 +23,7 @@ function boot(source){
  return {s:sandbox,p:sandbox.probe,stats:()=>({created,draws}),resetSeed:()=>{seed=42}};
 }
 const old=boot(baseline),now=boot(current);
-function state(p){const g=p.game;return JSON.parse(JSON.stringify(g,(k,v)=>['visualMoving','visualStride','visualBack','visualDirection','bentoWindup','bentoThrowAt','bentoThrowAngle','nopalShotAt','nopalShotAngle','rosaShotAt','rosaShotAngle','lassoArcs','weaponFx','visualWeapon','visualBorn','elements','characterId','startWeapon'].includes(k)?undefined:v))}
+function state(p){const g=p.game;return JSON.parse(JSON.stringify(g,(k,v)=>['nopalWalkTime','visualMoving','visualStride','visualBack','visualDirection','bentoWindup','bentoThrowAt','bentoThrowAngle','nopalShotAt','nopalShotAngle','rosaShotAt','rosaShotAngle','lassoArcs','weaponFx','visualWeapon','visualBorn','elements','characterId','startWeapon'].includes(k)?undefined:v))}
 for(let i=0;i<900;i++){
  for(const b of [old,now]){
   b.p.keys.clear();if(i%180<120)b.p.keys.add(i%360<180?'d':'a');if(i%90<30)b.p.keys.add('w');

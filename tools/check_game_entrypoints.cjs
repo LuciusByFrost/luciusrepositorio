@@ -52,7 +52,7 @@ const instrument=`(()=>{
    await tab.send('Page.navigate',{url});
    await until(async()=>{const s=await evaluate(statusExpression);return s&&s.url===canonical&&s.nopal.ready&&s.rosa.ready&&s.bento.ready?s:null},'all PNG renderers at '+url);
    const s=await evaluate(statusExpression);
-   for(const hero of ['nopal','rosa','bento'])for(const image of s[hero].images){assert.equal(image.width,384);assert.equal(image.height,hero==='bento'&&image.layer==='walk'?768:384);assert(image.url.includes('/assets/characters/'+hero+'/'))}
+   for(const hero of ['nopal','rosa','bento'])for(const image of s[hero].images){assert.equal(image.width,image.layer==='nopal_walk_8dir'?887:384);assert.equal(image.height,image.layer==='nopal_walk_8dir'?1774:hero==='bento'&&image.layer==='walk'?768:384);assert(image.url.includes('/assets/characters/'+hero+'/'))}
    await evaluate(instrument);return s;
   }
   const canonical=pathToFileURL(path.join(root,'index.html')).href;

@@ -69,6 +69,10 @@ const WeaponVisuals=(()=>{
   if(s.bomb){
    const progress=clamp(1-s.life/.85),lift=Math.sin(progress*Math.PI)*28;
    g.save();g.globalAlpha=.35;pixel(g,'#111922',x-5,y+3,10,3);g.restore();
+   if(typeof WeaponSprites!=='undefined'&&WeaponSprites.draw(g,'dynamite',x,y-Math.round(lift),angle)){
+    const a=angle,phase=t*30;pixel(g,'#fff0a0',x+Math.cos(a)*10+Math.sin(phase)*2,y-Math.round(lift)+Math.sin(a)*10,2);
+    g.restore();return;
+   }
    g.translate(x,y-Math.round(lift));g.rotate(progress*TAU*1.5);
    pixel(g,'#251f23',-6,-6,12,12);pixel(g,'#ad4336',-5,-5,4,10);pixel(g,'#d06543',0,-5,4,10);
    pixel(g,'#d7bd80',-5,-2,9,2);pixel(g,'#d7bd80',-5,3,9,1);
@@ -98,8 +102,10 @@ const WeaponVisuals=(()=>{
    pixel(g,'#eec380',x-5,y,12,2);pixel(g,'#eec380',x,y-5,2,12);
    const fall=clamp((u-.2)/.8),mx=x+(1-fall)*55,my=y-(1-fall)*210;
    g.globalAlpha=1;
-   for(let i=4;i>0;i--)pixel(g,i%2?'#ad5035':'#e9893d',mx+i*7-5,my-i*18-5,10-i,14);
-   pixel(g,'#582f2b',mx-8,my-8,16,16);pixel(g,'#efae47',mx-6,my-7,12,13);pixel(g,'#ffe49a',mx-4,my-5,6,7);
+   if(!(typeof WeaponSprites!=='undefined'&&WeaponSprites.draw(g,'meteor',mx,my,Math.atan2(210,-55)))){
+    for(let i=4;i>0;i--)pixel(g,i%2?'#ad5035':'#e9893d',mx+i*7-5,my-i*18-5,10-i,14);
+    pixel(g,'#582f2b',mx-8,my-8,16,16);pixel(g,'#efae47',mx-6,my-7,12,13);pixel(g,'#ffe49a',mx-4,my-5,6,7);
+   }
   }else{
    const age=h.t-h.delay;g.globalAlpha=clamp(1-age/.25);
    ring(g,x,y,h.r*clamp(age/.2),'#ffdc7b',0,1,40);
@@ -114,7 +120,9 @@ const WeaponVisuals=(()=>{
   for(let i=0;i<w.qty;i++){
    const a=w.angle+i*TAU/w.qty,x=sx(game.player.x+Math.cos(a)*r),y=sy(game.player.y+Math.sin(a)*r);
    for(let j=1;j<=3;j++){g.globalAlpha=.35/j;pixel(g,'#97d478',sx(game.player.x+Math.cos(a-j*.1)*r)-2,sy(game.player.y+Math.sin(a-j*.1)*r)-2,4)}
-   g.globalAlpha=1;g.save();g.translate(x,y);g.rotate(game.time*5+i);
+   g.globalAlpha=1;
+   if(typeof WeaponSprites!=='undefined'&&WeaponSprites.draw(g,'thorns',x,y,a+Math.PI/2))continue;
+   g.save();g.translate(x,y);g.rotate(game.time*5+i);
    pixel(g,'#1b302d',-6,-6,12,12);pixel(g,'#5f9651',-4,-5,8,10);pixel(g,'#a8c776',-3,-4,3,6);
    for(let j=0;j<4;j++){g.save();g.rotate(j*TAU/4);pixel(g,'#dce4a4',-1,-10,2,5);g.restore()}
    g.restore();

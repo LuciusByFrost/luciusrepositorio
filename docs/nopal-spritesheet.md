@@ -1,5 +1,55 @@
 # Spritesheet local do Nopal
 
+## Caminhada em oito direções e combinação com o tiro
+
+A integração atual usa também `assets/characters/nopal/nopal_walk_8dir.png`,
+PNG RGBA de **887 × 1774**, com transparência real (981517 pixels com alpha zero
+e 591330 com alpha parcial). Os dois originais permanecem intactos. O restante
+deste documento registra a preparação da folha antiga, reutilizada no tiro.
+
+`walk_atlas.js` registra 32 recortes individuais com chapéu, poncho, botas e
+revólver, hash do original e âncoras dos pés. Os intervalos das linhas foram
+inspecionados: 0, 230, 443, 661, 883, 1107, 1329, 1552 e 1774. A escala única
+0,30 mantém aproximadamente 57–63 pixels de altura, próxima aos 57–61 da arte
+antiga. A sola fica em y=22 relativo ao jogador nas duas folhas; a caminhada
+usa coordenadas inteiras e suavização desativada, sem espelhamento.
+
+As oito linhas são baixo, baixo/esquerda, esquerda, cima/esquerda, cima,
+cima/direita, direita e baixo/direita. Cabeça, tronco, pernas e arma fazem parte
+do mesmo recorte. Os quatro quadros avançam a 8 fps usando `dt` da simulação.
+`visualDirection` conserva a direção ao parar. O repouso antigo de três quartos
+é usado em baixo/direita e espelhado em baixo/esquerda; nas outras seis vistas,
+o repouso fixa a primeira coluna da caminhada.
+
+O evento existente `nopalShotAt/nopalShotAngle`, gerado pelo disparo real do
+revólver, dá prioridade aos quadros antigos 8–11 por 0,32 segundo. A vista
+antiga pode ser espelhada horizontalmente e seu braço separado mantém a mira
+real. Apenas o corpo antigo é desenhado durante o tiro. A prioridade permanece
+mesmo se outra arma adquirida disparar nesse intervalo. Movimento, direção e
+relógio da caminhada continuam sendo atualizados; ao terminar, o desenho volta
+à caminhada atual ou ao repouso, inclusive quando o jogador soltou as teclas
+durante o tiro. Nenhum projétil é criado pelo renderizador.
+
+O carregador compartilhado valida as três imagens (corpo, braço e caminhada).
+Enquanto alguma não está pronta ou falha, permanece o fallback procedural.
+Hitbox de raio 15, cadência, projéteis, atributos e progressão foram preservados.
+
+Para regenerar os metadados: `powershell -NoProfile -ExecutionPolicy Bypass
+-File tools/build_nopal_walk_atlas.ps1`. Teste: `node tools/check_nopal_walk.cjs`.
+O teste cobre direções, quadros, âncoras, alturas, prioridade, corpo único,
+repouso, recuperação, disparo real e comparação determinística de 180 quadros
+com todas as armas normais e evoluídas.
+
+`node tools/check_nopal_walk_browser.cjs 9228` usa Chrome iniciado com depuração
+remota nessa porta e verifica a entrada real do jogo por file://: seleção,
+início, 32 quadros, oito repousos, tiro parado, movimento contrário ao disparo,
+retorno à pose correta e pausa, sem erros de console/runtime/rede. Gera
+`tools/nopal-walk-selection.generated.png` e `tools/nopal-walk-game.generated.png`.
+FPS com hordas e uso prolongado em celular não foram avaliados.
+
+Para jogar: abra `index.html`, atualize com Ctrl+F5 e pressione Enter, 1 e Enter.
+Use WASD/setas, incluindo combinações diagonais. Os ataques são automáticos.
+
 O arquivo recebido está em `assets/characters/nopal/Nopal, pistoleiro cacto em pixel art.png`
 (não havia um arquivo chamado `spritesheet.png`). O original permanece intacto:
 1261 × 1247, PNG RGBA com alpha real. Seu SHA-256 está em `atlas.js` e é conferido

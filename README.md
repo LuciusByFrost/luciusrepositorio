@@ -46,7 +46,7 @@ A antiga entrada `luciusrepositorio/index.html` agora encaminha para ele. Se usa
 Live Server ou outro servidor local, abra a pasta `luciusbyfroty` como raiz do
 servidor. Após atualizar uma aba já aberta, use **Ctrl+F5**.
 
-Os sprites PNG do Nopal, Rosa e Bento aparecem na seleção e na partida. Veja a
+Os sprites PNG do Nopal, Rosa, Bento e Íris aparecem na seleção e na partida. Veja a
 [correção das entradas e a verificação no navegador](docs/sprite-loading.md).
 
 ## Controles
@@ -61,6 +61,10 @@ Os sprites PNG do Nopal, Rosa e Bento aparecem na seleção e na partida. Veja a
 Os ataques são automáticos. Movimente-se para posicionar o cacto, desviar e recolher gemas.
 
 ## Sistemas
+
+- As oito armas usam a folha direcional local em `assets/weapons/`, com fallback, recuo e efeitos de combate preservados. Veja [integração e testes das armas](docs/weapon-sprites.md).
+
+- O XP das gemas de inimigos cresce **20% por nível do jogador**: base × 1,20^(nível − 1), arredondado. A gema comum vale 1 XP no nível 1, 2 no nível 5, 5 no nível 10 e 32 no nível 20. O valor é fixado quando o inimigo morre; os baús mantêm o crescimento próprio de 25%. Verificação: `node tools/check_enemy_xp.cjs`.
 
 - Baús do Conhecimento aparecem em locais livres perto da área explorada. Aproxime-se e pressione **E** (ou toque no botão); a partida inteira pausa enquanto responde.
 - Banco de 60 perguntas originais de redes, organizado em seis categorias e três níveis. As perguntas avançadas são liberadas gradualmente e não se repetem na partida enquanto houver opções elegíveis.
@@ -83,7 +87,7 @@ Os ataques são automáticos. Movimente-se para posicionar o cacto, desviar e re
 - As opções limitam-se a alternar efeitos sonoros; não há trilha musical.
 - O cenário é uma arena procedural extensa, sem transição entre mapas ou prédios exploráveis.
 - As evoluções de armas são concedidas por baús comuns quando os requisitos de nível são atendidos.
-- Cenários e Íris usam arte procedural; Nopal, Rosa e Bento usam spritesheets locais com fallback procedural.
+- Cenários usam arte procedural; os quatro personagens usam spritesheets locais com fallback procedural.
 
 ## Expansões recomendadas
 
@@ -104,8 +108,8 @@ do Nopal. Veja [integração, prévia e verificações da Rosa](docs/rosa-sprite
 Bento usa agora uma folha de ações e outra de caminhada em **oito direções**.
 Ao parar, conserva a orientação; o arremesso acompanha o lançamento real da
 dinamite. Os originais foram preservados. Veja [arquivos, recortes e verificações
-do Bento](docs/bento-spritesheet.md). Não há PNG da Íris na pasta dela, e sua
-aparência atual continua funcionando.
+do Bento](docs/bento-spritesheet.md). Íris também usa caminhada em oito direções;
+veja [recortes, animação e testes da Íris](docs/iris-spritesheet.md).
 
 ## Protagonista: cacto pistoleiro
 
