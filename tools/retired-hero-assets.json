@@ -1,0 +1,128 @@
+{
+  "reason": "Replaced by complete measured walk/attack frames; source and filename reference scan before deletion. Shared weapon assets preserved.",
+  "files": [
+    {
+      "file": "assets/characters/nopal/Nopal, pistoleiro cacto em pixel art.png",
+      "references": []
+    },
+    {
+      "file": "assets/characters/nopal/arms.png",
+      "references": []
+    },
+    {
+      "file": "assets/characters/nopal/atlas.png",
+      "references": []
+    },
+    {
+      "file": "assets/characters/nopal/body.png",
+      "references": []
+    },
+    {
+      "file": "assets/characters/nopal/hands.png",
+      "references": []
+    },
+    {
+      "file": "assets/characters/nopal/nopal_walk_8dir.png",
+      "references": [
+        {
+          "file": "assets/characters/nopal/walk_atlas.js",
+          "line": 11,
+          "text": "\"source\":  \"assets/characters/nopal/nopal_walk_8dir.png\","
+        }
+      ]
+    },
+    {
+      "file": "assets/characters/nopal/walk_atlas.js",
+      "references": []
+    },
+    {
+      "file": "assets/characters/nopal/walk_weaponless.png",
+      "references": []
+    },
+    {
+      "file": "assets/characters/rosa/arms.png",
+      "references": []
+    },
+    {
+      "file": "assets/characters/rosa/atlas.png",
+      "references": []
+    },
+    {
+      "file": "assets/characters/rosa/body.png",
+      "references": []
+    },
+    {
+      "file": "assets/characters/rosa/hands.png",
+      "references": []
+    },
+    {
+      "file": "assets/characters/rosa/spritesheet.png",
+      "references": []
+    },
+    {
+      "file": "assets/characters/bento/actions.png",
+      "references": []
+    },
+    {
+      "file": "assets/characters/bento/spritesheet (2).png",
+      "references": []
+    },
+    {
+      "file": "assets/characters/bento/walk.png",
+      "references": [
+        {
+          "file": "assets/characters/bento/atlas.js",
+          "line": 51,
+          "text": "\"source\":  \"assets/characters/bento/bento_walk.png\","
+        },
+        {
+          "file": "assets/characters/iris/atlas.js",
+          "line": 51,
+          "text": "\"source\":  \"assets/characters/iris/iris_walk.png\","
+        },
+        {
+          "file": "assets/characters/nopal/atlas.js",
+          "line": 51,
+          "text": "\"source\":  \"assets/characters/nopal/nopal_walk.png\","
+        },
+        {
+          "file": "assets/characters/rosa/atlas.js",
+          "line": 51,
+          "text": "\"source\":  \"assets/characters/rosa/rosa_walk.png\","
+        },
+        {
+          "file": "docs/bento-spritesheet.md",
+          "line": 3,
+          "text": "O jogo usa os originais `assets/characters/bento/bento_walk.png` e `assets/characters/bento/bento_attack.png`, preservados sem edi??o, e os derivados `walk_normalized.png`/`attack_normalized.png` na mesma pasta."
+        },
+        {
+          "file": "docs/iris-spritesheet.md",
+          "line": 3,
+          "text": "O jogo usa os originais `assets/characters/iris/iris_walk.png` e `assets/characters/iris/iris_attack.png`, preservados sem edi??o, e os derivados `walk_normalized.png`/`attack_normalized.png` na mesma pasta."
+        },
+        {
+          "file": "docs/nopal-spritesheet.md",
+          "line": 3,
+          "text": "O jogo usa os originais `assets/characters/nopal/nopal_walk.png` e `assets/characters/nopal/nopal_attack.png`, preservados sem edi??o, e os derivados `walk_normalized.png`/`attack_normalized.png` na mesma pasta."
+        },
+        {
+          "file": "docs/rosa-spritesheet.md",
+          "line": 3,
+          "text": "O jogo usa os originais `assets/characters/rosa/rosa_walk.png` e `assets/characters/rosa/rosa_attack.png`, preservados sem edi??o, e os derivados `walk_normalized.png`/`attack_normalized.png` na mesma pasta."
+        }
+      ]
+    },
+    {
+      "file": "assets/characters/bento/walk_8directions.png",
+      "references": []
+    },
+    {
+      "file": "assets/characters/iris/iris_spritesheet.png",
+      "references": []
+    },
+    {
+      "file": "assets/characters/iris/weaponless.png",
+      "references": []
+    }
+  ]
+}

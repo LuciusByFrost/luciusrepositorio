@@ -72,9 +72,7 @@ async function connect(url){
      const srcs=[],sizes=[],old=CanvasRenderingContext2D.prototype.drawImage;
      CanvasRenderingContext2D.prototype.drawImage=function(image,...args){srcs.push(image.src||'canvas');if(image.src?.includes('/weapons_8directions.png')){const m=this.getTransform();sizes.push({crop:args.slice(0,4),w:args[6],h:args[7],a:m.a,d:m.d})}return old.call(this,image,...args)};
      try{f.draw()}finally{CanvasRenderingContext2D.prototype.drawImage=old}
-     if(srcs.some(s=>s.includes('/arms.png')))throw Error('legacy gun/flash overlapped '+character+'/'+id);
-     if(character==='nopal'&&srcs.some(s=>s.includes('/nopal_walk_8dir.png')))throw Error('baked walking revolver');
-     if(character==='iris'&&srcs.some(s=>s.includes('/iris_spritesheet.png')))throw Error('baked coil');
+     if(srcs.some(s=>s.includes('/characters/')&&!s.includes('/walk_normalized.png')&&!s.includes('/attack_normalized.png')))throw Error('unexpected hero layer');
      if(JSON.stringify(g)!==before)throw Error('drawing mutated gameplay');
      for(const s of sizes){
       const entry=Object.entries(WeaponAtlas.weapons).find(([id,data])=>data.frames.some(frame=>frame.x===s.crop[0]&&frame.y===s.crop[1]));
@@ -105,9 +103,9 @@ async function connect(url){
     f.newGame(id);f.setScreen('pause');const g=f.game,p=g.player;g.spawn=100;g.nextBoss=Infinity;
     for(const w of Object.values(g.weapons))w.cool=100;
     for(const key of dirs[dir])f.keys.add(key);f.setScreen('playing');f.update(.01);f.setScreen('pause');
-    if(!p.visualMoving||id!=='rosa'&&p.visualDirection!==dir)throw Error('walk direction '+id+'/'+dir);
-    for(let col=0;col<4;col++){
-     p.nopalWalkTime=(col+.1)/8;p.irisWalkTime=(col+.1)/8;p.visualStride=(col+.1)*Math.PI/2;
+    if(!p.visualMoving||p.visualDirection!==dir)throw Error('walk direction '+id+'/'+dir);
+    for(let col=0;col<6;col++){
+     p.visualWalkTime=(col+.1)/10;
      f.drawPlayer({...p,visualTime:g.time});count++;
     }
     f.keys.clear();f.setScreen('playing');f.update(.01);f.setScreen('pause');if(p.visualMoving)throw Error('stop');
@@ -122,12 +120,12 @@ async function connect(url){
     if(id==='iris'&&WeaponSprites.nativeHand(p,g.time).embeddedWeapon!=='lasso')throw Error('missing complete Iris fallback');
    }
    return count;
-  })()`);assert.equal(poses,480);
+  })()`);assert.equal(poses,544);
   await ev(`(()=>{
    const ctx=document.querySelector('#game').getContext('2d'),old=CanvasRenderingContext2D.prototype.drawImage;let count=0;
    CanvasRenderingContext2D.prototype.drawImage=function(image,...args){if(image.src?.includes('/weapons_8directions.png')){count++;const m=this.getTransform();if(m.a!==2||m.d!==2)throw Error('selection presentation applied twice')}return old.call(this,image,...args)};
    try{for(const hero of CharacterRoster.list)weaponTest.drawCharacterPreview(hero,200,200,2,5)}finally{CanvasRenderingContext2D.prototype.drawImage=old}
-   if(count!==2)throw Error('expected two separate starter guns; Iris keeps her complete embedded whip and dynamite is projectile-only');
+   if(count!==0)throw Error('starter weapons must not be drawn over complete hero frames in selection');
    weaponTest.openCharacterSelect();weaponTest.drawCharacterSelect();document.querySelector('#toast').style.display='none';
   })()`);await capture('weapons-selection');
   // Real Canvas gallery makes every crop, pivot and scale reviewable.
@@ -150,7 +148,7 @@ async function connect(url){
   })()`);await capture('weapons-characters');
   await ev(`weaponTest.newGame('nopal');weaponTest.game.time=1;const target=weaponTest.spawnEnemy('brute');Object.assign(target,{x:100,y:70,hp:10000,maxHp:10000});weaponTest.fireWeapon(weaponTest.game.weapons.revolver);weaponTest.draw();weaponTest.setScreen('pause')`);await capture('weapons-nopal-shot');
   assert.deepEqual(errors,[]);
-  console.log('PASS Chrome: file root/redirect and HTTP; 256 weapon cases plus 480 idle/walk/attack/recovery poses across 4 heroes/eight directions; fixed sizes, shared 1x/2x presentation, unchanged projectile origins, safe embedded-weapon fallback, pure draws; no console/runtime/network errors.');
+  console.log('PASS Chrome: file root/redirect and HTTP; 256 weapon cases plus 544 idle/walk/attack/recovery poses across 4 heroes/eight directions; fixed sizes, shared 1x/2x presentation, unchanged projectile origins, safe embedded-weapon fallback, pure draws; no console/runtime/network errors.');
  }catch(e){console.error(e.stack);process.exitCode=1}
  finally{if(server)server.close();if(browser){await browser.send('Browser.close').catch(()=>{});browser.socket.close()}if(tab)tab.socket.close()}
 })();

@@ -44,6 +44,8 @@ const WeaponSprites=(()=>{
   return {id,angle,direction:dir,behind:dir>=5&&dir<=7};
  }
  function held(ctx,p,x,y,t){
+  const hero=fullHeroSprite(p);
+  if(hero&&(hero.pose(p,t).shooting||(p.heldWeapon||p.startWeapon||hero.embeddedWeapon)===hero.embeddedWeapon))return true;
   if(!ready())return false;
   const a=heldState(p,t);
   // These three abilities live in the world: no second handheld bomb/cactus/meteor.
@@ -79,26 +81,10 @@ const WeaponSprites=(()=>{
   ctx.restore();return true;
  }
  function nativeHand(p,t){
-  if(!ready()||!meta.characters)return null;
-  const id=p.characterId,chars=meta.characters;
-  if(id==='nopal'&&typeof NopalSprite!=='undefined'&&NopalSprite.active(p)){
-   const pose=NopalSprite.pose(p,t);
-   if(pose.sheet==='walk')return {...walkingHand(NopalWalkAtlas,chars.nopal.frames[pose.frame].hand,pose.frame),embeddedWeapon:chars.nopal.embeddedWeapon};
-   const f=NopalAtlas.frames[pose.frame],h=chars.nopal.actions[pose.frame].hand;
-   return {x:(h[0]-NopalAtlas.pivot[0])*pose.face,y:h[1]-NopalAtlas.pivot[1]+NopalAtlas.worldFeetY};
-  }
-  if(id==='rosa'&&typeof RosaSprite!=='undefined'&&RosaSprite.active(p)){
-   const pose=RosaSprite.pose(p,t),h=chars.rosa.actions[pose.frame].hand;
-   return {x:(h[0]-RosaAtlas.pivot[0])*pose.face,y:h[1]-RosaAtlas.pivot[1]+RosaAtlas.worldFeetY};
-  }
-  if(id==='iris'&&typeof IrisSprite!=='undefined'&&IrisSprite.active(p)){
-   const pose=IrisSprite.pose(p,t);return {...walkingHand(IrisAtlas,chars.iris.frames[pose.frame].hand,pose.frame),embeddedWeapon:chars.iris.embeddedWeapon};
-  }
-  return null;
+  const hero=fullHeroSprite(p);
+  if(!hero)return null;
+  const a=hero.pose(p,t);
+  return {x:a.direction>=1&&a.direction<=3?-10:10,y:-2,embeddedWeapon:hero.embeddedWeapon};
  }
- function walkingHand(data,hand,index){
-  const f=data.frames[index],s=data.scale;
-  return {x:Math.round(hand[0]*s)-Math.round((f.anchor[0]-f.x)*s),y:data.worldFeetY-Math.round(f.h*s)+Math.round(hand[1]*s)};
- }
- return {ready,status:loader.status,direction,geometry,heldState,held,draw,nativeHand,armLayer:id=>loader.image(id+'_hands'),body:id=>loader.image(id==='iris'?'iris_body':'nopal_walk_body')};
+ return {ready,status:loader.status,direction,geometry,heldState,held,draw,nativeHand};
 })();

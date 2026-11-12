@@ -4,7 +4,7 @@ const calls=[],rotations=[],pending=[];
 class Image{constructor(){pending.push(this)}set src(v){this.url=v}get src(){return this.url}load(){const path=new URL(this.src).pathname.replace('/game/','');const png=fs.readFileSync(path);this.complete=true;this.naturalWidth=png.readUInt32BE(16);this.naturalHeight=png.readUInt32BE(20);this.onload()}}
 const ctx=new Proxy({drawImage(...a){calls.push(a)},rotate(...a){rotations.push(a)}},{get:(o,k)=>o[k]??(()=>{}),set:(o,k,v)=>(o[k]=v,true)});
 const box={URL,Image,console,document:{currentScript:{src:'file:///game/js/weapon_sprites.js'},createElement:()=>({getContext:()=>ctx})}};vm.createContext(box);
-for(const f of ['js/nopal_sprite.js','assets/weapons/atlas.js','js/weapon_sprites.js'])vm.runInContext(fs.readFileSync(f,'utf8'),box);
+for(const f of ['js/hero_sprite.js','assets/weapons/atlas.js','js/weapon_sprites.js'])vm.runInContext(fs.readFileSync(f,'utf8'),box);
 const S=vm.runInContext('WeaponSprites',box),M=vm.runInContext('WeaponAtlas',box);
 assert(!S.ready());assert(!S.draw(ctx,'solar',0,0,0));for(const img of pending)img.load();assert(S.ready());
 assert.equal(crypto.createHash('sha256').update(fs.readFileSync(M.source)).digest('hex').toUpperCase(),M.sourceSHA256);assert(M.transparentPixels>0);assert(M.partialAlphaPixels>0);

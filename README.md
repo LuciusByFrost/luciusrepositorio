@@ -93,81 +93,15 @@ Os ataques são automáticos. Movimente-se para posicionar o cacto, desviar e re
 
 Adicionar mais chefes e padrões, itens passivos que habilitem evoluções, biomas exploráveis, opções de acessibilidade e uma trilha original opcional.
 
-## Nopal: spritesheet local
+## Sprites dos quatro personagens
 
-Nopal usa agora o PNG local normalizado em 16 quadros, com pés alinhados, alpha
-real, braço/revólver separado para mira e fallback para a arte anterior. Os outros
-forasteiros mantêm a arte atual. Veja [integração, prévia e verificações do Nopal](docs/nopal-spritesheet.md).
+Nopal, Rosa, Bento e Íris usam novas folhas separadas: 48 quadros de caminhada e 32 de ataque por personagem, em oito direções. Os recortes são medidos pela arte, com altura corporal e apoio dos pés normalizados. O repouso conserva a última direção; o ataque acompanha o evento real da arma inicial e permite continuar andando.
 
-A seção abaixo descreve a arte procedural preservada como fallback.
+Os oito PNGs originais ficam nas pastas existentes em `assets/characters/`. Não há braços/máscaras separados. O fallback procedural continua disponível para falhas de carregamento.
 
-Rosa agora é uma pistoleira réptil do deserto, com spritesheet local, pés
-alinhados e disparo ligado ao tiro real da espingarda. Ela reutiliza a estrutura
-do Nopal. Veja [integração, prévia e verificações da Rosa](docs/rosa-spritesheet.md).
+[Prévia animada](tools/hero-preview.html) · [Integração, arquivos, testes e limitações](docs/hero-sprites.md).
 
-Bento usa agora uma folha de ações e outra de caminhada em **oito direções**.
-Ao parar, conserva a orientação; o arremesso acompanha o lançamento real da
-dinamite. Os originais foram preservados. Veja [arquivos, recortes e verificações
-do Bento](docs/bento-spritesheet.md). Íris também usa caminhada em oito direções;
-veja [recortes, animação e testes da Íris](docs/iris-spritesheet.md).
-
-## Protagonista: cacto pistoleiro
-
-`js/player_sprite.js` compõe pixel art original em camadas de Canvas auxiliares
-de 64×64 pixels, criadas uma única vez. Não há PNGs ou dependências externas.
-A silhueta mantém aproximadamente a altura anterior (60 pixels), com corpo
-verde-escuro com sombras oliva, espinhos, cicatriz, chapéu largo gasto, poncho
-recortado, bandana vermelha, botas e coldre vazio. As laterais escalonadas e
-braços curtos reforçam o cartoon moderado; olhos estreitos e sobrancelhas
-inclinadas mantêm uma expressão séria.
-
-O caminho ativo continua sendo `installDetailedSprites()` → `drawPlayerNight()`
-→ `CactusHero.draw()`, seguido de uma única chamada a `drawHeldWeapon()`.
-Os desenhos antigos inativos não são chamados por esse caminho.
-Sombra, botas, braços, corpo/cinto, poncho, expressão, bandana, chapéu e efeitos
-são compostos separadamente. `bake()` é o ponto de substituição futura por
-recortes de spritesheets, mantendo âncora e poses.
-
-`visualStride` avança pela distância comandada de caminhada, sem alterar o
-deslocamento; parado, as botas repousam. Respiração, chapéu e tecido usam o
-tempo da partida e congelam em pausa. Piscadas duram cerca de 140 ms a cada
-4,7 segundos; ataque e dano têm prioridade sobre elas. Ataque e dano aproveitam
-os temporizadores existentes: braço/arma recuam, o chapéu reage ao disparo e o
-rosto reage ao impacto. A compressão de dano dura cerca de 110 ms e utiliza
-variantes em cache que removem duas linhas de pixels, sem escala fracionária.
-A arma acompanha a mesma pose, com a mão posicionada no lado da mira, e mantém
-o ângulo de mira existente. O revólver teve apenas sua escala visual reduzida
-para melhorar a leitura dos acessórios. Não há animação de morte no
-jogo original; o desenho continua sob a tela de fim de jogo.
-
-A origem do jogador e a hitbox circular de raio 15 permanecem inalteradas.
-Chapéu, botas e arma são extensões visuais, não áreas extras de colisão.
-
-Verificação reproduzível: `node tools/check_player_sprite.cjs`. Compara 900
-quadros determinísticos com `HEAD:js/main.js`, as oito armas e dano; verifica
-poses, piscadas, recuperação da compressão, reação do chapéu, orientações,
-hitbox, ausência de mutações durante desenho e reutilização
-dos canvases. O Canvas desse teste é simulado, portanto ele não mede FPS nem
-qualidade visual. `node tools/check_player_sprite.cjs --preview` também gera
-`tools/player-preview.generated.html`, uma prévia descartável para inspeção no
-navegador com o renderizador real e poses em escala normal e ampliada.
-
-Foram verificadas sintaxe JavaScript, equivalência de simulação e poses estáticas
-no Chrome headless. Fluidez durante uma partida interativa, comportamento em
-celular e FPS com hordas ainda exigem validação manual. Melhorias futuras do
-protagonista: atlas PNG opcional e animação própria de morte.
-
-O revólver usa uma camada própria em cache (`CactusHero.drawRevolver()`), com
-aço escurecido, tambor com sulcos, guarda-mato de latão e cabo de madeira.
-Mantém a escala visual e a extremidade do cano usadas pelo efeito de disparo.
-Os desenhos-base das outras armas foram preservados; suas animações estão
-descritas abaixo.
-
-A densidade dos cactos decorativos durante a partida é controlada por
-`MAP_CACTUS_THRESHOLD` em `js/main.js`. O limite 0,98 mantém aproximadamente
-um terço dos cactos anteriores (redução de 66,6% em uma amostra de 40.000
-células), preservando arbustos e as posições dos cactos restantes. Os cactos
-decorativos do menu não foram alterados.
+Verificações: `node tools/check_hero_sprites.cjs`, `node tools/check_player_sprite.cjs` e `powershell -NoProfile -ExecutionPolicy Bypass -File tools/verify_game_entrypoints.ps1`.
 
 ## Dinamite e terreno
 

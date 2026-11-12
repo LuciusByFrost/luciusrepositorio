@@ -42,9 +42,7 @@ try {
   }
   $weapons[$ids[$row]]=@{worldSize=$sizes[$row];frames=$frames}
  }
- $meta=[ordered]@{basePath='../assets/weapons/';images=[ordered]@{weapons_8directions=@{size=@(1254,1254)};nopal_walk_body=@{file='../characters/nopal/walk_weaponless.png';size=@(887,1774)};iris_body=@{file='../characters/iris/weaponless.png';size=@(887,1774)}};source='assets/weapons/weapons_8directions.png';sourceSHA256=(Get-FileHash $source).Hash;transparentPixels=$zero;partialAlphaPixels=$partial;weapons=$weapons}
+ $meta=[ordered]@{basePath='../assets/weapons/';images=[ordered]@{weapons_8directions=@{size=@(1254,1254)}};source='assets/weapons/weapons_8directions.png';sourceSHA256=(Get-FileHash $source).Hash;transparentPixels=$zero;partialAlphaPixels=$partial;weapons=$weapons}
  [IO.File]::WriteAllText((Join-Path $root 'assets/weapons/atlas.js'),"/* Measured by tools/build_weapon_atlas.ps1; originals preserved. */`nconst WeaponAtlas = " + ($meta|ConvertTo-Json -Depth 12) + ";`n")
  Write-Output "Weapons $($bmp.Width)x$($bmp.Height): alpha0=$zero partial=$partial; 64 crops with pivots."
 }finally{$bmp.Dispose()}
-# Character anatomy is rebuilt from complete originals by the protected-region builder.
-& (Join-Path $PSScriptRoot "build_character_limbs.ps1")

@@ -61,69 +61,8 @@ Cartuchos, impactos, energia, partículas e descargas permanecem complementares.
 O chicote avança e pulsa durante a ativação real; as correntes mantêm os alvos
 e os pontos de origem existentes.
 
-Nopal e Rosa usam `body.png` com uma camada nativa adicional `hands.png`, que
-restaura mão, antebraço e pixels anatômicos removidos pela separação antiga.
-O cano e o clarão antigos não são redesenhados integralmente. A mão e a arma
-compartilham o apoio do quadro original; o braço procedural não substitui
-o membro nativo. A camada da mão vem antes ou depois do corpo conforme a mira.
-Os quadros de ataque ainda conservam a prioridade de tiro do Nopal.
+Os quatro personagens agora usam quadros completos com armas incorporadas. O atlas de armas carrega somente a folha compartilhada de armas, preservada para projéteis, habilidades e armas adquiridas. Durante o ataque incorporado, a arma e o clarão sobrepostos são suprimidos. Fora dele, uma arma adquirida diferente da inicial pode aparecer na mão livre.
 
-Os dois nomes de derivados abaixo foram mantidos por compatibilidade com o
-carregador, mas agora contêm cópias completas dos originais, sem apagar pixels:
+Detalhes da substituição: [personagens completos](hero-sprites.md).
 
-- `assets/characters/nopal/walk_weaponless.png`
-- `assets/characters/iris/weaponless.png`
-
-As antigas máscaras por cor também apagavam contornos e membros, e foram
-removidas. Na caminhada do Nopal e nas poses da Íris, a arma fundida à arte
-é preservada; não se sobrepõe outra cópia da mesma arma. A troca para as ações
-em camadas do Nopal continua usando o novo revólver. Outras armas adquiridas
-usam a mão oposta quando a arma inicial já está incorporada ao quadro.
-Para substituir integralmente a arma nas duas folhas achatadas, serão
-necessárias versões sem arma/camadas separadas. O fallback completo atual
-preserva os membros e as oito vistas, sem alterar o combate. Bento
-mantém a dinamite incorporada ao gesto; a nova dinamite aparece apenas no
-projétil arremessado. Cacto e meteoro aparecem somente nos objetos orbitais e
-na queda, evitando cópias extras na mão.
-
-`WeaponVisuals.projectile()` mantém o arco de altura da bomba e usa a velocidade
-para orientar a imagem, com faísca de pavio. Os cactos acompanham a tangente
-das órbitas existentes. O meteoro usa a direção de sua trajetória visual;
-a chama já está na imagem, substituindo a chama procedural anterior. Avisos,
-explosões e ondas de impacto permanecem. Balas e energia solar continuam no
-renderizador de projéteis, pois a folha contém armas, não esses projéteis.
-
-## Verificações
-
-- Regenerar: `powershell -NoProfile -ExecutionPolicy Bypass -File tools/build_weapon_atlas.ps1`.
-- Restaurar anatomia sem recalcular armas: `powershell -NoProfile -ExecutionPolicy Bypass -File tools/build_character_limbs.ps1`.
-- `powershell -NoProfile -ExecutionPolicy Bypass -File tools/check_character_limbs.ps1`:
-  igualdade de todos os pixels dos dois originais de caminhada, 64 recortes,
-  âncoras e preservação de cabeça/pernas/solas em 32 poses em camadas.
-- `node tools/check_weapon_sprites.cjs`: hash/alpha, 64 recortes/pivôs,
-  direções/histerese, destinos inteiros, ausência de segunda rotação, fallback,
-  tamanhos em unidades do jogo, conversão comum às oito vistas, invariância ao
-  dobrar a resolução de origem, empunhadura/clarão alinhados aos pixels finais,
-  comparação de 180 quadros com as oito armas normais/evoluídas entre imagens
-  carregadas e fallback, e desenho sem mutações do jogo.
-- `node tools/check_weapon_browser.cjs 9228`: Chrome iniciado com depuração
-  remota nessa porta; entradas file:// da raiz e redirecionamento, HTTP,
-  quatro personagens × oito armas × oito direções (256 casos), disparos reais,
-  movimento, trocas, comparação de tamanho entre repouso/ataque e apresentação
-  1x/2x, seleção real dos quatro personagens, origens físicas dos projéteis,
-  ausência de camadas antigas de arma, erros de console/rede
-  e capturas `tools/weapons-*.generated.png`. A API de teste é adicionada apenas
-  pelo servidor temporário, no fechamento da função do jogo.
-- Passaram também verificações existentes de personagens, XP, elementos,
-  baús, chefes e regressão geral de combate.
-
-## Limitações visuais e teste manual
-
-As vistas geradas têm diferenças de proporção e pose; o encaixe aproxima
-oito ângulos, sem inventar posições intermediárias. As duas folhas achatadas
-mantêm suas armas autorais no fallback completo, pois não têm camadas
-independentes. Não foram medidos FPS com hordas nem uso prolongado em celular.
-
-Abra `index.html`, atualize com Ctrl+F5, escolha um personagem e caminhe com
-WASD/setas. Os ataques são automáticos. Adquira outras armas nas melhorias
-para conferir as trocas e observe os avisos do meteoro, órbitas e projéteis.
+Verificação: `node tools/check_weapon_sprites.cjs`, `node tools/check_player_sprite.cjs` e `node tools/check_weapon_browser.cjs` (Chrome na porta 9227).

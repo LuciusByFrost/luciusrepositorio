@@ -17,13 +17,13 @@ function boot(source){
  const sandbox={console,Math:math,performance:{now:()=>1000},localStorage:{getItem:()=>'{"sound":false}',setItem(){}},requestAnimationFrame(){},window:{addEventListener(){}},document:{querySelector:()=>element(),createElement:()=>{created++;return element()}}};
  sandbox.addEventListener=()=>{};sandbox.window=sandbox;
  vm.createContext(sandbox);
- for(const f of ['js/network_questions.js','js/knowledge_chests.js','js/characters.js','assets/characters/nopal/atlas.js','js/nopal_sprite.js','assets/characters/rosa/atlas.js','js/rosa_sprite.js','assets/characters/bento/atlas.js','js/bento_sprite.js','js/player_sprite.js','js/weapon_visuals.js','js/elements.js','js/element_visuals.js','js/enemy_sprites.js','js/bosses.js','js/chests.js'])vm.runInContext(fs.readFileSync(f,'utf8'),sandbox);
+ for(const f of ['js/network_questions.js','js/knowledge_chests.js','js/characters.js','js/hero_sprite.js','assets/characters/nopal/atlas.js','js/nopal_sprite.js','assets/characters/rosa/atlas.js','js/rosa_sprite.js','assets/characters/bento/atlas.js','js/bento_sprite.js','js/player_sprite.js','js/weapon_visuals.js','js/elements.js','js/element_visuals.js','js/enemy_sprites.js','js/bosses.js','js/chests.js'])vm.runInContext(fs.readFileSync(f,'utf8'),sandbox);
  source=source.replace(/\}\)\(\);\s*$/,`globalThis.probe={newGame,update,draw,drawWorld,drawPlayer,drawHeldWeapon,fireWeapon,explode,hurtPlayer,spawnEnemy,keys,get game(){return game},setScreen:s=>screen=s,get screen(){return screen}};})();`);
  vm.runInContext(source,sandbox);sandbox.probe.newGame();
  return {s:sandbox,p:sandbox.probe,stats:()=>({created,draws}),resetSeed:()=>{seed=42}};
 }
 const old=boot(baseline),now=boot(current);
-function state(p){const g=p.game;return JSON.parse(JSON.stringify(g,(k,v)=>['nopalWalkTime','visualMoving','visualStride','visualBack','visualDirection','bentoWindup','bentoThrowAt','bentoThrowAngle','nopalShotAt','nopalShotAngle','rosaShotAt','rosaShotAngle','lassoArcs','weaponFx','visualWeapon','visualBorn','elements','characterId','startWeapon'].includes(k)?undefined:v))}
+function state(p){const g=p.game;return JSON.parse(JSON.stringify(g,(k,v)=>['heroAttackAt','heroAttackAngle','visualWalkTime','nopalWalkTime','visualMoving','visualStride','visualBack','visualDirection','bentoWindup','bentoThrowAt','bentoThrowAngle','nopalShotAt','nopalShotAngle','rosaShotAt','rosaShotAngle','lassoArcs','weaponFx','visualWeapon','visualBorn','elements','characterId','startWeapon'].includes(k)?undefined:v))}
 for(let i=0;i<900;i++){
  for(const b of [old,now]){
   b.p.keys.clear();if(i%180<120)b.p.keys.add(i%360<180?'d':'a');if(i%90<30)b.p.keys.add('w');
