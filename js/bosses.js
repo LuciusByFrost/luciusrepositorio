@@ -71,7 +71,7 @@ const BossSystem=(()=>{
    if(game.completed)return;
    if(h.done||h.owner.hp<=0||!game.enemies.includes(h.owner)||game.time-h.start<h.delay)continue;
    h.done=true;h.firedAt=game.time;
-   const e=h.owner,enraged=e.hp<e.maxHp*.5;EnemySprites.cue(e,game.time,h.kind);
+   const e=h.owner,enraged=e.hp<e.maxHp*.5;EnemySprites.cue(e,game.time,h.kind,h.x-e.x,h.y-e.y);
    if(h.kind==='cannon'||h.kind==='storm_fan'){
     fan(game,e,h,api,enraged?5:3,h.kind==='cannon'?.48:.95,h.kind==='cannon'?245:205,h.kind==='cannon'?'#efb16a':'#a8e7ee',h.kind==='cannon'?13:11);
     EnemySprites.fired(e,game.time,h.x-e.x,h.y-e.y);

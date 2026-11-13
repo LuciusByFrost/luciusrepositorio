@@ -1,5 +1,7 @@
 # Inimigos e chefes em pixel art
 
+> Atualização: nove visuais agora usam PNGs. Consulte [integração atual](enemy-png-integration.md). As descrições procedurais abaixo documentam o fallback preservado e os sistemas de combate.
+
 O redesign usa a versão local atual e preserva os quatro personagens jogáveis.
 Toda a arte dos oponentes é procedural, sem imagens externas, curvas vetoriais,
 gradientes internos ou escalas fracionárias. Os pixels têm a mesma densidade dos

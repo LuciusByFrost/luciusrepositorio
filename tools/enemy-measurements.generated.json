@@ -1,0 +1,83 @@
+{
+  "bandit": {
+    "asset": "coyote_marauder",
+    "removedArtifactPixels": 583501,
+    "sourceFramesTouchingEdge": 6,
+    "bodyHeightRange": [
+      130,
+      157
+    ]
+  },
+  "runner": {
+    "asset": "vulture_scout",
+    "removedArtifactPixels": 254948,
+    "sourceFramesTouchingEdge": 2,
+    "bodyHeightRange": [
+      120,
+      148
+    ]
+  },
+  "gunslinger": {
+    "asset": "dust_bandit",
+    "removedArtifactPixels": 541584,
+    "sourceFramesTouchingEdge": 2,
+    "bodyHeightRange": [
+      116,
+      140
+    ]
+  },
+  "brute": {
+    "asset": "scorpion_brute",
+    "removedArtifactPixels": 427589,
+    "sourceFramesTouchingEdge": 7,
+    "bodyHeightRange": [
+      115,
+      150
+    ]
+  },
+  "gravedigger": {
+    "asset": "cactus_spitter",
+    "removedArtifactPixels": 272110,
+    "sourceFramesTouchingEdge": 2,
+    "bodyHeightRange": [
+      110,
+      138
+    ]
+  },
+  "armored": {
+    "asset": "armadillo_bomber",
+    "removedArtifactPixels": 408327,
+    "sourceFramesTouchingEdge": 2,
+    "bodyHeightRange": [
+      118,
+      141
+    ]
+  },
+  "boss": {
+    "asset": "bone_rifleman",
+    "removedArtifactPixels": 710062,
+    "sourceFramesTouchingEdge": 19,
+    "bodyHeightRange": [
+      127,
+      148
+    ]
+  },
+  "iron_colonel": {
+    "asset": "iron_bull",
+    "removedArtifactPixels": 256441,
+    "sourceFramesTouchingEdge": 10,
+    "bodyHeightRange": [
+      111,
+      148
+    ]
+  },
+  "storm_widow": {
+    "asset": "scorpion_queen",
+    "removedArtifactPixels": 342807,
+    "sourceFramesTouchingEdge": 10,
+    "bodyHeightRange": [
+      121,
+      152
+    ]
+  }
+}

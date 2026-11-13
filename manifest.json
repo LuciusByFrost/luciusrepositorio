@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "direction_order": [
+    "down",
+    "down_left",
+    "left",
+    "up_left",
+    "up",
+    "up_right",
+    "right",
+    "down_right"
+  ],
+  "frame_size": {
+    "width": 160,
+    "height": 160
+  },
+  "walk": {
+    "start_column": 0,
+    "frames_per_direction": 4,
+    "fps": 8,
+    "loop": true
+  },
+  "attack": {
+    "start_column": 4,
+    "frames_per_direction": 4,
+    "fps": 10,
+    "loop": false
+  },
+  "notes": "Arte gerada como spritesheets conceituais. Validar posições, direções, transparência e enquadramento antes de integrar; não substituir ids existentes cegamente.",
+  "characters": [
+    {
+      "id": "dust_bandit",
+      "name": "Bandido da Poeira",
+      "category": "enemies",
+      "attack_type": "revólver",
+      "sheet": "assets/enemies/dust_bandit/spritesheet.png",
+      "walk": "assets/enemies/dust_bandit/walk.png",
+      "attack": "assets/enemies/dust_bandit/attack.png"
+    },
+    {
+      "id": "coyote_marauder",
+      "name": "Saqueador Coiote",
+      "category": "enemies",
+      "attack_type": "faca curva",
+      "sheet": "assets/enemies/coyote_marauder/spritesheet.png",
+      "walk": "assets/enemies/coyote_marauder/walk.png",
+      "attack": "assets/enemies/coyote_marauder/attack.png"
+    },
+    {
+      "id": "scorpion_brute",
+      "name": "Escorpião Brutamontes",
+      "category": "enemies",
+      "attack_type": "pinças",
+      "sheet": "assets/enemies/scorpion_brute/spritesheet.png",
+      "walk": "assets/enemies/scorpion_brute/walk.png",
+      "attack": "assets/enemies/scorpion_brute/attack.png"
+    },
+    {
+      "id": "bone_rifleman",
+      "name": "Rifleiro Esqueleto",
+      "category": "enemies",
+      "attack_type": "rifle",
+      "sheet": "assets/enemies/bone_rifleman/spritesheet.png",
+      "walk": "assets/enemies/bone_rifleman/walk.png",
+      "attack": "assets/enemies/bone_rifleman/attack.png"
+    },
+    {
+      "id": "vulture_scout",
+      "name": "Abutre Batedor",
+      "category": "enemies",
+      "attack_type": "garras",
+      "sheet": "assets/enemies/vulture_scout/spritesheet.png",
+      "walk": "assets/enemies/vulture_scout/walk.png",
+      "attack": "assets/enemies/vulture_scout/attack.png"
+    },
+    {
+      "id": "cactus_spitter",
+      "name": "Cacto Cuspidor",
+      "category": "enemies",
+      "attack_type": "espinhos",
+      "sheet": "assets/enemies/cactus_spitter/spritesheet.png",
+      "walk": "assets/enemies/cactus_spitter/walk.png",
+      "attack": "assets/enemies/cactus_spitter/attack.png"
+    },
+    {
+      "id": "armadillo_bomber",
+      "name": "Tatu Bombardeiro",
+      "category": "enemies",
+      "attack_type": "explosivos",
+      "sheet": "assets/enemies/armadillo_bomber/spritesheet.png",
+      "walk": "assets/enemies/armadillo_bomber/walk.png",
+      "attack": "assets/enemies/armadillo_bomber/attack.png"
+    },
+    {
+      "id": "iron_bull",
+      "name": "Touro de Ferro",
+      "category": "bosses",
+      "attack_type": "investida",
+      "sheet": "assets/bosses/iron_bull/spritesheet.png",
+      "walk": "assets/bosses/iron_bull/walk.png",
+      "attack": "assets/bosses/iron_bull/attack.png"
+    },
+    {
+      "id": "scorpion_queen",
+      "name": "Rainha Escorpião",
+      "category": "bosses",
+      "attack_type": "veneno",
+      "sheet": "assets/bosses/scorpion_queen/spritesheet.png",
+      "walk": "assets/bosses/scorpion_queen/walk.png",
+      "attack": "assets/bosses/scorpion_queen/attack.png"
+    }
+  ]
+}

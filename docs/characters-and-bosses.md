@@ -1,5 +1,7 @@
 # Forasteiros e novos chefes
 
+> Atualização: nove visuais agora usam PNGs. Consulte [integração atual](enemy-png-integration.md). As descrições procedurais abaixo documentam o fallback preservado e os sistemas de combate.
+
 Os seis inimigos comuns e quatro chefes agora compartilham o módulo de arte
 procedural `js/enemy_sprites.js`. Veja [redesign dos oponentes](enemy-pixel-art.md)
 para camadas, animações, fases, avisos corrigidos, limites e previews dos dez tipos.

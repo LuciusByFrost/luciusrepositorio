@@ -1,0 +1,67 @@
+{
+  "assertions": 3426,
+  "errors": [],
+  "hordeUpdateAndWorldDrawMs": 114.5,
+  "proceduralWorldMs": 204.03999999960263,
+  "pngDrawMs": 36.346666665871936,
+  "proceduralDrawMs": 97.56666666666666,
+  "canvasAllocations": 0,
+  "drawn": [
+    "http://127.0.0.1:53331/assets/enemies/coyote_marauder/normalized.png?v=60f9ea6492c3b3ef91e54f730f18f17928a1fd455a7727e13b786dc55f22da08",
+    "http://127.0.0.1:53331/assets/enemies/vulture_scout/normalized.png?v=16d277e8a06f5198ff6709724bff7883333032e1ce02fd6c267b5f34acc2c50d",
+    "http://127.0.0.1:53331/assets/enemies/dust_bandit/normalized.png?v=ec488ef340be95a41281d9dba19a1e7ef158753be062eeab7ca3c923866042bc",
+    "http://127.0.0.1:53331/assets/enemies/scorpion_brute/normalized.png?v=4b019ee64f453207474f70e4e72381ac6598d11a961b8bb6a6ddafa852a2737f",
+    "http://127.0.0.1:53331/assets/enemies/cactus_spitter/normalized.png?v=4c8b0052491c6917dcb05ef74024cbf047a74e08fcf59ffe056c124c6a2a29c8",
+    "http://127.0.0.1:53331/assets/enemies/armadillo_bomber/normalized.png?v=c703e54f2084aabf99bd0737086285d799e07d6c7de7ce3d5f97380ae0334e1c",
+    "http://127.0.0.1:53331/assets/enemies/bone_rifleman/normalized.png?v=82e25b0ea8c349ad20c9b531bae647a05abc5e8047bc653cd7c689aabc86a992",
+    "http://127.0.0.1:53331/assets/bosses/iron_bull/normalized.png?v=b7ed7c855e0a21b3541cde955bb1b1f60da4eadb9592d776c03a1942198749f5",
+    "http://127.0.0.1:53331/assets/bosses/scorpion_queen/normalized.png?v=9080d17c6c7a8d2d44a9d94369b25a8f01fbdfec2247567e42729e013874d744"
+  ],
+  "status": {
+    "bandit": {
+      "state": "ready",
+      "url": "http://127.0.0.1:53331/assets/enemies/coyote_marauder/normalized.png?v=60f9ea6492c3b3ef91e54f730f18f17928a1fd455a7727e13b786dc55f22da08",
+      "asset": "coyote_marauder"
+    },
+    "runner": {
+      "state": "ready",
+      "url": "http://127.0.0.1:53331/assets/enemies/vulture_scout/normalized.png?v=16d277e8a06f5198ff6709724bff7883333032e1ce02fd6c267b5f34acc2c50d",
+      "asset": "vulture_scout"
+    },
+    "gunslinger": {
+      "state": "ready",
+      "url": "http://127.0.0.1:53331/assets/enemies/dust_bandit/normalized.png?v=ec488ef340be95a41281d9dba19a1e7ef158753be062eeab7ca3c923866042bc",
+      "asset": "dust_bandit"
+    },
+    "brute": {
+      "state": "ready",
+      "url": "http://127.0.0.1:53331/assets/enemies/scorpion_brute/normalized.png?v=4b019ee64f453207474f70e4e72381ac6598d11a961b8bb6a6ddafa852a2737f",
+      "asset": "scorpion_brute"
+    },
+    "gravedigger": {
+      "state": "ready",
+      "url": "http://127.0.0.1:53331/assets/enemies/cactus_spitter/normalized.png?v=4c8b0052491c6917dcb05ef74024cbf047a74e08fcf59ffe056c124c6a2a29c8",
+      "asset": "cactus_spitter"
+    },
+    "armored": {
+      "state": "ready",
+      "url": "http://127.0.0.1:53331/assets/enemies/armadillo_bomber/normalized.png?v=c703e54f2084aabf99bd0737086285d799e07d6c7de7ce3d5f97380ae0334e1c",
+      "asset": "armadillo_bomber"
+    },
+    "boss": {
+      "state": "ready",
+      "url": "http://127.0.0.1:53331/assets/enemies/bone_rifleman/normalized.png?v=82e25b0ea8c349ad20c9b531bae647a05abc5e8047bc653cd7c689aabc86a992",
+      "asset": "bone_rifleman"
+    },
+    "iron_colonel": {
+      "state": "ready",
+      "url": "http://127.0.0.1:53331/assets/bosses/iron_bull/normalized.png?v=b7ed7c855e0a21b3541cde955bb1b1f60da4eadb9592d776c03a1942198749f5",
+      "asset": "iron_bull"
+    },
+    "storm_widow": {
+      "state": "ready",
+      "url": "http://127.0.0.1:53331/assets/bosses/scorpion_queen/normalized.png?v=9080d17c6c7a8d2d44a9d94369b25a8f01fbdfec2247567e42729e013874d744",
+      "asset": "scorpion_queen"
+    }
+  }
+}

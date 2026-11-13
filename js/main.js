@@ -103,7 +103,7 @@ function spawnEnemy(type){
  const defs={bandit:[24,68,9,12,'#a95138'],runner:[15,126,7,10,'#e17b48'],gunslinger:[28,48,7,10,'#548397'],brute:[105,31,19,17,'#68504b'],gravedigger:[75,40,13,13,'#6e526f'],armored:[72,48,14,14,'#b58d50'],boss:[780+game.time*3,36,28,31,'#46333b']};
  const d=custom?BossSystem.stats(type,game.time):defs[type]||defs.bandit;
  const e={type:custom?'boss':type,x,y,hp:d[0]*scale,maxHp:d[0]*scale,speed:d[1]*(1+game.time*.0004),damage:d[2]*(1+game.time*.001),r:d[3],color:d[4],cd:rand(1,3),attack:rand(1,3),phase:0,hit:0,knock:0,anim:rand(0,TAU),boss:isBoss,summon:6};
- if(custom)BossSystem.configure(e,type);setEnemyLevel(e,enemyLevelFor(game.time));game.enemies.push(e);return e;
+ if(custom)BossSystem.configure(e,type);setEnemyLevel(e,enemyLevelFor(game.time));game.enemies.push(e);EnemySprites.track(e,game.time);return e;
 }
 function openCharacterSelect(){keys.clear();stick.x=stick.y=0;knob.style.transform='translate(0,0)';screen='characters'}
 function handleCharacterClick(point){
@@ -148,7 +148,7 @@ function update(dt){if(screen!=='playing'||game.completed)return;const g=game,p=
     e.summon-=dt;if(e.summon<=0){spawnEnemy('runner');spawnEnemy('bandit');e.summon=8}
    }
   }
-  if(d<e.r+p.r+2&&p.invuln<=0&&!ElementSystem.frozen(g,e)){hurtPlayer(e.damage);if(g.completed)return;const kx=vx/d,ky=vy/d;p.x+=kx*12;p.y+=ky*12}
+  if(d<e.r+p.r+2&&p.invuln<=0&&!ElementSystem.frozen(g,e)){EnemySprites.cue(e,g.time,'contact',vx,vy);hurtPlayer(e.damage);if(g.completed)return;const kx=vx/d,ky=vy/d;p.x+=kx*12;p.y+=ky*12}
  }
  for(const w of Object.values(g.weapons)){w.cool-=dt;w.angle+=dt*(w.id==='thorns'?2:0);if(w.level&&w.cool<=0)fireWeapon(w);}if(p.characterId==='bento'){const bomb=g.weapons.dynamite;p.bentoWindup=!!(bomb.level&&bomb.cool>0&&bomb.cool<=.12)}
  for(const s of g.shots){s.x+=s.vx*dt;s.y+=s.vy*dt;s.life-=dt;if(s.bomb&&s.life<=0)explode(s);else if(!s.bomb){for(const e of g.enemies){if(e.hp<=0||s.hitTargets?.has(e))continue;if(Math.hypot(e.x-s.x,e.y-s.y)<e.r+s.r){damageEnemy(e,s.damage,s.crit,s.visualWeapon);WeaponVisuals.emit(g,'hit',s.x,s.y,Math.atan2(s.vy,s.vx),0,s.visualWeapon);(s.hitTargets||=(new Set())).add(e);s.pierce--;if(s.pierce<0){s.life=0;break}}}}}g.shots=g.shots.filter(s=>s.life>0);

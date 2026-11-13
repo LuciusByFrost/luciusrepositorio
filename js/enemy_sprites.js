@@ -1,5 +1,5 @@
-/* Native-grid enemy art. Combat objects are read-only to this renderer.
-   Layers share one pixel density, with no scaling based on collision radius. */
+/* PNGs are primary; original cached art is retained for load failures and
+   grave_keeper. All animation records live outside combat entities. */
 const EnemySprites=(()=>{
  'use strict';
  const ink='#151a23',bone='#dfcfa8',brass='#b89a61',steel='#8b9996',leather='#51392f';
@@ -179,13 +179,33 @@ const EnemySprites=(()=>{
   if(part!=='rage'||profiles[id].boss)bake(id,part);
  }
  function reset(){records=new WeakMap();deaths=[]}
- function record(e){let s=records.get(e);if(!s){s={x:e.x,y:e.y,moving:false,shot:-10,cue:-10,rage:false,rageAt:-10};records.set(e,s)}return s}
- function fired(e,t,dx,dy){const s=record(e);s.shot=t;s.angle=Math.atan2(dy,dx)}
- function cue(e,t,kind){const s=record(e);s.cue=t;s.kind=kind}
+ function record(e){let s=records.get(e);if(!s){s={x:e.x,y:e.y,moving:false,shot:-10,cue:-10,rage:false,rageAt:-10,direction:0,walkTime:0,clock:0,lastTime:null,attackAt:-Infinity};records.set(e,s)}return s}
+ function track(e,t){const s=record(e);s.x=e.x;s.y=e.y;s.lastTime=t}
+ const atlas=typeof EnemyAtlas==='undefined'?{}:EnemyAtlas,images=new Map();
+ const directions=['down','down_left','left','up_left','up','up_right','right','down_right'];
+ const base=typeof Image==='function'?new URL('../',document.currentScript?.src||document.baseURI):null;
+ for(const [id,data] of Object.entries(atlas)){
+  const item={state:'loading',image:null};images.set(id,item);
+  if(!base){item.state='unavailable';continue}
+  const image=item.image=new Image();image.onload=()=>{item.state=image.naturalWidth===data.size[0]&&image.naturalHeight===data.size[1]?'ready':'error'};
+  image.onerror=()=>{item.state='error'};image.src=new URL(data.file+'?v='+data.sha256,base).href;
+ }
+ function direction(dx,dy){return (Math.round(Math.atan2(-dx,dy)/(Math.PI/4))+8)%8}
+ function attack(e,t,dx,dy){const s=record(e);if(s.eventAt!==t){s.attackAt=s.clock;s.eventAt=t}if(dx||dy)s.attackDirection=direction(dx,dy)}
+ function fired(e,t,dx,dy){const s=record(e);s.shot=t;s.angle=Math.atan2(dy,dx);attack(e,t,dx,dy)}
+ function cue(e,t,kind,dx,dy){const s=record(e);s.cue=t;s.kind=kind;attack(e,t,dx??Math.cos(s.aim||0),dy??Math.sin(s.aim||0))}
  function defeat(e,t){deaths.push({x:e.x,y:e.y,t,id:key(e)});if(deaths.length>64)deaths.shift()}
  function tick(game){
   for(const e of game.enemies){
-   const s=record(e);s.moving=Math.hypot(e.x-s.x,e.y-s.y)>.01;s.x=e.x;s.y=e.y;
+   const s=record(e),dx=e.x-s.x,dy=e.y-s.y,wasMoving=s.moving;
+   const dt=s.lastTime===null?0:Math.max(0,game.time-s.lastTime);s.lastTime=game.time;
+   const frozen=(e.elementState?.ice?.frozenUntil||0)>game.time;
+   if(!frozen)s.clock+=dt;
+   if(s.eventAt===game.time)s.attackAt=s.clock;
+   s.moving=!frozen&&Math.hypot(dx,dy)>.01;
+   if(s.moving){s.direction=direction(dx,dy);s.walkTime=wasMoving?s.walkTime+dt:0}else s.walkTime=0;
+   const data=atlas[key(e)];if(data&&s.clock-s.attackAt<data.attack.columns.length/data.attack.fps)s.walkTime=0;
+   s.x=e.x;s.y=e.y;
    s.face=game.player.x<e.x?-1:1;s.aim=Math.atan2(game.player.y-e.y,game.player.x-e.x);
    s.preparing=(e.type==='gunslinger'||key(e)==='boss')&&e.cd>0&&e.cd<.4&&Math.hypot(game.player.x-e.x,game.player.y-e.y)<500;
    for(const h of game.bossHazards||[])if(h.owner===e&&!h.done){
@@ -210,6 +230,7 @@ const EnemySprites=(()=>{
    flash:rage&&s&&t-s.rageAt>=0&&t-s.rageAt<.32,gear:frozen?0:attack?-3:Math.round(Math.sin(moving?phase:t*2)*.7)};
  }
  function draw(g,e,x,y,t=0){
+  if(drawPNG(g,e,x,y,t))return true;
   const id=key(e),p=profiles[id],a=pose(e,t);x=Math.round(x);y=Math.round(y);
   g.save();g.imageSmoothingEnabled=false;g.translate(x,y);
   g.fillStyle='#10172299';g.fillRect(-p.w-4,p.sole-2,p.w*2+8,3);g.scale(a.face,1);
@@ -265,5 +286,30 @@ const EnemySprites=(()=>{
    }
   }g.restore();
  }
- return {profiles,draw,pose,tick,reset,fired,cue,defeat,effects};
+ function spritePose(e,t){
+  const data=atlas[key(e)];if(!data)return null;
+  const s=records.get(e),clock=s?.clock||0,age=clock-(s?.attackAt??-Infinity),attacking=age>=0&&age<data.attack.columns.length/data.attack.fps;
+  const state=attacking?'attack':'walk',a=data[state],moving=!!s?.moving;
+  const frame=attacking?Math.min(a.columns.length-1,Math.floor(age*a.fps)):moving?Math.floor(s.walkTime*a.fps)%a.columns.length:0;
+  const dir=attacking?s.attackDirection??s.direction:s?.preparing?direction(Math.cos(s.aim),Math.sin(s.aim)):s?.direction||0;
+  const row=data.directions.indexOf(directions[dir]);
+  return {state:attacking?'attack':moving?'walk':'idle',sheet:state,direction:dir,row,column:a.columns[frame],frame:row*data.columns+a.columns[frame]};
+ }
+ function drawPNG(g,e,x,y,t){
+  const id=key(e),data=atlas[id],item=images.get(id);if(!data||!item)return false;
+  // A loading asset has no procedural stand-in. Failures use the cached fallback.
+  if(item.state==='loading')return true;if(item.state!=='ready')return false;
+  const a=spritePose(e,t),f=data.frames[a.frame],p=profiles[id],s=records.get(e);x=Math.round(x);y=Math.round(y);
+  g.save();g.imageSmoothingEnabled=false;
+  g.fillStyle='#10172299';g.fillRect(x-p.w-4,y+p.sole-2,p.w*2+8,3);
+  if(e.hit>0)g.globalAlpha=.7;
+  const [cx,cy,cw,ch]=f.crop;
+  g.drawImage(item.image,f.x+cx,f.y+cy,cw,ch,x-data.pivot[0]+cx,y+p.sole-data.pivot[1]+cy,cw,ch);g.globalAlpha=1;
+  if(e.boss&&e.hp<e.maxHp*.5){g.fillStyle=p.eye;for(let i=0;i<4;i++)g.fillRect(x-p.w+i*Math.round(p.w*2/3),y+p.sole-5-(Math.floor(t*8)+i)%3*3,2,2);
+   if(s&&t-s.rageAt<.32){g.fillStyle=bone;g.fillRect(x-p.w-8,y-data.worldHeight/2,6,2);g.fillRect(x+p.w+2,y-data.worldHeight/2,6,2)}}
+  if(e.hp<e.maxHp||e.boss){const bw=e.boss?84:Math.max(22,p.w*2),hy=y+p.sole-data.worldHeight-8;g.fillStyle='#171b23';g.fillRect(x-Math.floor(bw/2),hy,bw,4);g.fillStyle=e.boss?'#d77f67':'#a4c37a';g.fillRect(x-Math.floor(bw/2)+1,hy+1,Math.max(0,Math.round((bw-2)*Math.max(0,e.hp/e.maxHp))),2)}
+  g.restore();return true;
+ }
+ function status(){return Object.fromEntries([...images].map(([id,item])=>[id,{state:item.state,url:item.image?.src,asset:atlas[id].asset}]))}
+ return {profiles,draw,pose,tick,reset,fired,cue,defeat,effects,spritePose,status,direction,track};
 })();

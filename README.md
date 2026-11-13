@@ -1,7 +1,6 @@
 # Cactus Survivors: O Último Cacto do Oeste
 
-Os seis inimigos comuns e os quatro chefes têm pixel art própria, animações em
-camadas e aparências enfurecidas. Veja [arte dos oponentes, avisos e previews](docs/enemy-pixel-art.md).
+Nove oponentes usam sprites PNG direcionais com caminhada e ataque; o Coveiro do Breu conserva sua arte procedural. Veja [integração, mapeamento e testes](docs/enemy-png-integration.md).
 
 Jogo de sobrevivência 2D feito com HTML, CSS e JavaScript puro. Não usa bibliotecas, imagens externas ou servidor.
 

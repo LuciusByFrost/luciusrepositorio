@@ -84,3 +84,5 @@ if(baselinePath){
  }
  console.log('PASS: 2400 frames identical to the current local pre-redesign simulation; six enemy AIs, four bosses, all eight evolved weapons, enrage thresholds, projectiles and rewards unchanged.');
 }
+// Validate the primary PNG path as well as the retained procedural fallback.
+require('./check_enemy_png.cjs');

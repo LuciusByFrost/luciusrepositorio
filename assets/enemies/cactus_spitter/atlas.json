@@ -1,0 +1,47 @@
+{
+  "id": "cactus_spitter",
+  "name": "Cacto Cuspidor",
+  "direction_order": [
+    "down",
+    "down_left",
+    "left",
+    "up_left",
+    "up",
+    "up_right",
+    "right",
+    "down_right"
+  ],
+  "frame_width": 160,
+  "frame_height": 160,
+  "spritesheet": {
+    "path": "spritesheet.png",
+    "columns": 8,
+    "rows": 8,
+    "walk_columns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "attack_columns": [
+      4,
+      5,
+      6,
+      7
+    ]
+  },
+  "walk": {
+    "path": "walk.png",
+    "columns": 4,
+    "rows": 8,
+    "fps": 8,
+    "loop": true
+  },
+  "attack": {
+    "path": "attack.png",
+    "columns": 4,
+    "rows": 8,
+    "fps": 10,
+    "loop": false
+  }
+}
