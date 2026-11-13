@@ -13,6 +13,17 @@ for(const id of ['nopal','rosa','bento','iris']){
   const d=M[sheet],cols=sheet==='walk'?6:4;assert.equal(d.frames.length,8*cols);
   assert.equal(crypto.createHash('sha256').update(fs.readFileSync(d.source)).digest('hex').toUpperCase(),d.sourceSHA256);
   const png=fs.readFileSync(d.source),width=png.readUInt32BE(16),height=png.readUInt32BE(20);
+  assert.deepEqual(Array.from(d.sourceSize),[width,height],'metadata must record the real source dimensions');
+  const image=M.images[sheet],bytes=fs.readFileSync('assets/characters/'+id+'/'+image.file);
+  const hash=crypto.createHash('sha256').update(bytes).digest('hex');assert.equal(image.sha256,hash);
+  assert(image.file.includes(hash.slice(0,12)),'PNG URL must change when its generated pixels change');
+  const url=new URL(S.status().images.find(i=>i.layer===sheet).url);assert.equal(url.searchParams.get('v'),hash);
+  for(const f of d.frames){
+   const anchor=f.sourceAnchor.map((v,i)=>f.offset[i]+(v-f.sourceRect[i])*f.scale);
+   assert(Math.abs(anchor[0]-64)<=.500001,'horizontal body anchor drift');
+   assert(Math.abs(anchor[1]-88)<=.500001,'feet drift between walk/attack');
+   assert(Math.abs(f.offset[1]+(f.bodyTop-f.sourceRect[1])*f.scale-(88-M.worldBodyHeight))<=.500001,'body scale/height drift');
+  }
   for(const f of d.frames){const [x,y,w,h]=f.sourceRect;assert(x>=0&&y>=0&&x+w<=width&&y+h<=height);assert(Math.abs(f.bodyHeight*f.scale-M.worldBodyHeight)<1e-8);assert.deepEqual(Array.from(f.anchor),[64,88]);assert(f.offset[0]>=3&&f.offset[1]>=3&&f.offset[0]+f.drawSize[0]<=125&&f.offset[1]+f.drawSize[1]<=125)}
   for(let i=0;i<d.frames.length;i++)for(let j=i+1;j<d.frames.length;j++){
    const a=d.frames[i].sourceRect,b=d.frames[j].sourceRect;
@@ -27,8 +38,13 @@ for(const id of ['nopal','rosa','bento','iris']){
   p.heroAttackAt=20;p.heroAttackAngle=angle;p.visualMoving=true;
   for(let col=0;col<4;col++){const t=20+(col+.1)/12.5,a=S.pose(p,t);assert.equal(a.sheet,'attack');assert.equal(a.frame,dir*4+col);calls.length=0;const before=JSON.stringify(p);assert(S.draw(ctx,p,50.2,70.8,t));assert.equal(calls.length,1);assert.equal(JSON.stringify(p),before);assert.equal(ctx.imageSmoothingEnabled,false);assert(calls[0].slice(1).every(Number.isInteger))}
   assert.equal(S.pose(p,20.321).sheet,'walk');p.visualMoving=false;assert.equal(S.pose(p,20.321).frame,dir*6);delete p.heroAttackAt;
+  // Aim is locked to the shot while movement can change for the recovery.
+  p.heroAttackAt=30;p.heroAttackAngle=angle;p.visualMoving=true;p.visualWalkTime=.21;p.visualDirection=(dir+3)%8;
+  assert.equal(S.pose(p,30.16).direction,dir);assert.equal(S.pose(p,30.16).sheet,'attack');
+  assert.equal(S.pose(p,30.321).direction,(dir+3)%8);assert.equal(S.pose(p,30.321).sheet,'walk');
+  p.visualMoving=false;assert.equal(S.pose(p,30.321).column,0);delete p.heroAttackAt;
  }
- const warn=box.console;box.console={...console,warn(){}};pending.at(-1).onerror();assert(!S.active(p));assert.equal(S.status().state,'error');assert(!S.draw(ctx,p,0,0,0));box.console=warn;
+ const warn=box.console;let diagnostic='';box.console={...console,error:m=>diagnostic=m};pending.at(-1).onerror();assert(!S.active(p));assert.equal(S.status().state,'error');assert(!S.draw(ctx,p,0,0,0));assert(diagnostic.includes(id+'/attack'));box.console=warn;
 }
 // Use real combat, including target selection, every starter and moving attacks.
 for(const id of ['nopal','rosa','bento','iris']){

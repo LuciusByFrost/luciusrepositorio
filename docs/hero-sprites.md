@@ -1,6 +1,6 @@
 # Novos sprites dos quatro personagens
 
-As caminhadas foram encontradas em `C:/Users/user/Downloads`. Os quatro ataques atuais vieram de `C:/Users/user/Downloads/sprites_ataque_personagens.zip` e substituíram as versões anteriores nos mesmos caminhos, sem alterar os PNGs extraídos. Não foi criada outra árvore de personagens.
+As caminhadas foram encontradas em `C:/Users/user/Downloads`. Os quatro ataques foram conferidos novamente com `sprites_ataque_personagens.zip`, na raiz do projeto, extraído em uma pasta temporária. Os hashes SHA-256 dos quatro PNGs do ZIP são idênticos aos das folhas já instaladas. Os arquivos foram copiados para os caminhos ativos e os ataques normalizados e seus recortes foram reconstruídos, preservando as caminhadas e os demais ajustes locais. Não foi criada outra árvore de personagens.
 
 | Personagem | Caminhada de origem | Ataque de origem | Altura corporal no jogo |
 | --- | --- | --- | ---: |
@@ -15,9 +15,22 @@ As caminhadas foram encontradas em `C:/Users/user/Downloads`. Os quatro ataques 
 
 `tools/build_hero_atlases.ps1` gera, em cada pasta:
 
-- `walk_normalized.png`: 768×1024, seis colunas e oito linhas.
-- `attack_normalized.png`: 512×1024, quatro colunas e oito linhas.
+- `walk_normalized.<hash>.png`: 768×1024, seis colunas e oito linhas.
+- `attack_normalized.<hash>.png`: 512×1024, quatro colunas e oito linhas.
 - `atlas.js`: formato de script clássico existente, agora versão 2, com os dois estados separados, dimensões, hashes, recortes de origem, landmarks corporais, escalas, deslocamentos e mapa das linhas.
+
+Os campos `walk.sourceSize` e `attack.sourceSize` registra explicitamente as dimensões reais da folha
+extraída: `[887,1774]` para os quatro personagens. A reconstrução parcial dos
+ataques preserva os PNGs e todos os metadados de caminhada. Os testes também
+conferem o apoio e o topo corporal após escala, com tolerância de meio pixel
+pelo arredondamento, e a mudança de direção de caminhada durante o ataque.
+
+A conferência do ZIP local passou também no Chrome: quatro personagens × oito
+direções, caminhada, repouso, disparo real, movimento durante o ataque, retorno
+e pausa, sem erros de assets ou execução. Os PNGs normalizados reconstruídos
+são idênticos aos anteriores. A pasta temporária de extração e suas cópias de
+segurança foram removidas após a validação; não havia outra folha antiga de
+ataque sem uso nas pastas ativas. O ZIP original foi preservado.
 
 As células derivadas têm 128×128, apoio em (64,88) e margem mínima verificada. A altura usa chapéu/orelhas até botas; o centro da cabeça fornece o eixo horizontal estável. Cyan do laço, clarões e extensão de armas/caudas não entram no cálculo da escala. Os deslocamentos de cada quadro alinham os pés; a reamostragem é nearest-neighbor. Nenhum par de recortes de origem se sobrepõe.
 
@@ -37,7 +50,7 @@ Para reconstruir apenas os ataques, execute `powershell -NoProfile -ExecutionPol
 
 A posição continua sendo atualizada normalmente durante o ataque. Ao terminar, o compositor consulta o movimento atual e volta à caminhada ou ao repouso. O relógio vem da simulação e congela na pausa. Durante o ataque incorporado, não se desenha outra arma ou outro clarão sobre a figura. No repouso/caminhada, a arma inicial também não é duplicada; armas adquiridas diferentes continuam disponíveis na mão livre. Projéteis, arcos elétricos no mundo, explosões e efeitos de impacto continuam ativos.
 
-O fallback procedural existente permanece apenas para erro de carregamento. Braços separados, máscaras e corpos antigos não participam do caminho normal nem do atlas de armas. O atlas compartilhado de armas foi preservado para projéteis e armas independentes.
+Em erro de carregamento, o navegador mostra um marcador e um erro claro no console; o corpo procedural antigo não substitui a folha ausente. Braços separados, máscaras e corpos antigos não participam do caminho normal nem do atlas de armas. O atlas compartilhado de armas foi preservado para projéteis e armas independentes.
 
 ## Verificação e prévia
 
@@ -61,3 +74,5 @@ Todos os nomes abaixo são relativos a `assets/characters/<personagem>/`. Antes 
 | `iris` | `iris_spritesheet.png`, `weaponless.png` |
 
 Os quatro `atlas.js` ativos foram atualizados. Os comandos antigos de geração/teste encaminham ao sistema novo, para não recriarem dependências obsoletas. Assets compartilhados, os oito originais novos e a subpasta histórica do usuário foram preservados. Nenhum commit ou push faz parte desta alteração.
+
+A reconstrução completa usa nomes de PNG derivados de SHA-256 e atualiza as revisões de scripts no HTML. Veja [o rastreamento das duas entradas, antes/depois por personagem e evidências visuais](sprite-loading.md).

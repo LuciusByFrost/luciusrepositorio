@@ -22,22 +22,24 @@ const IrisAtlas = {
                    ],
     "images":  {
                    "walk":  {
-                                "file":  "walk_normalized.png",
+                                "file":  "walk_normalized.70fa75440cd0.png",
                                 "size":  [
                                              768,
                                              1024
-                                         ]
+                                         ],
+                                "sha256":  "70fa75440cd09b5f9e2d576815817b02fac8b129348843644126d595895f1673"
                             },
                    "attack":  {
-                                  "file":  "attack_normalized.png",
+                                  "file":  "attack_normalized.b2fe103f0428.png",
                                   "size":  [
                                                512,
                                                1024
-                                           ]
+                                           ],
+                                  "sha256":  "b2fe103f0428cd022416daee5e75357cb7916452f4c0dd4d58ae98cee9809261"
                               }
                },
     "walk":  {
-                 "fps":  10,
+                 "source":  "assets/characters/iris/iris_walk.png",
                  "idleColumns":  [
                                      0,
                                      0,
@@ -48,8 +50,6 @@ const IrisAtlas = {
                                      0,
                                      0
                                  ],
-                 "source":  "assets/characters/iris/iris_walk.png",
-                 "sourceSHA256":  "A4EFC2F2EC266940821046634E04FE750A1224E617CBBDE4A59377BA7CFC3B89",
                  "rowMap":  [
                                 0,
                                 1,
@@ -61,6 +61,7 @@ const IrisAtlas = {
                                 7
                             ],
                  "columns":  6,
+                 "fps":  10,
                  "referenceBodyHeight":  142,
                  "frames":  [
                                 {
@@ -130,7 +131,7 @@ const IrisAtlas = {
                                     "column":  1
                                 },
                                 {
-                                    "scale":  0.4025157232704403,
+                                    "scale":  0.40251572327044027,
                                     "y":  0,
                                     "drawSize":  [
                                                      37,
@@ -460,7 +461,7 @@ const IrisAtlas = {
                                     "column":  5
                                 },
                                 {
-                                    "scale":  0.4507042253521127,
+                                    "scale":  0.45070422535211269,
                                     "y":  256,
                                     "drawSize":  [
                                                      47,
@@ -493,7 +494,7 @@ const IrisAtlas = {
                                     "column":  0
                                 },
                                 {
-                                    "scale":  0.4507042253521127,
+                                    "scale":  0.45070422535211269,
                                     "y":  256,
                                     "drawSize":  [
                                                      44,
@@ -526,7 +527,7 @@ const IrisAtlas = {
                                     "column":  1
                                 },
                                 {
-                                    "scale":  0.4507042253521127,
+                                    "scale":  0.45070422535211269,
                                     "y":  256,
                                     "drawSize":  [
                                                      45,
@@ -658,7 +659,7 @@ const IrisAtlas = {
                                     "column":  5
                                 },
                                 {
-                                    "scale":  0.4507042253521127,
+                                    "scale":  0.45070422535211269,
                                     "y":  384,
                                     "drawSize":  [
                                                      44,
@@ -724,7 +725,7 @@ const IrisAtlas = {
                                     "column":  1
                                 },
                                 {
-                                    "scale":  0.4507042253521127,
+                                    "scale":  0.45070422535211269,
                                     "y":  384,
                                     "drawSize":  [
                                                      41,
@@ -757,7 +758,7 @@ const IrisAtlas = {
                                     "column":  2
                                 },
                                 {
-                                    "scale":  0.4507042253521127,
+                                    "scale":  0.45070422535211269,
                                     "y":  384,
                                     "drawSize":  [
                                                      45,
@@ -823,7 +824,7 @@ const IrisAtlas = {
                                     "column":  4
                                 },
                                 {
-                                    "scale":  0.4507042253521127,
+                                    "scale":  0.45070422535211269,
                                     "y":  384,
                                     "drawSize":  [
                                                      42,
@@ -889,7 +890,7 @@ const IrisAtlas = {
                                     "column":  0
                                 },
                                 {
-                                    "scale":  0.4507042253521127,
+                                    "scale":  0.45070422535211269,
                                     "y":  512,
                                     "drawSize":  [
                                                      38,
@@ -922,7 +923,7 @@ const IrisAtlas = {
                                     "column":  1
                                 },
                                 {
-                                    "scale":  0.4507042253521127,
+                                    "scale":  0.45070422535211269,
                                     "y":  512,
                                     "drawSize":  [
                                                      37,
@@ -1054,7 +1055,7 @@ const IrisAtlas = {
                                     "column":  5
                                 },
                                 {
-                                    "scale":  0.4740740740740741,
+                                    "scale":  0.47407407407407409,
                                     "y":  640,
                                     "drawSize":  [
                                                      44,
@@ -1087,7 +1088,7 @@ const IrisAtlas = {
                                     "column":  0
                                 },
                                 {
-                                    "scale":  0.4740740740740741,
+                                    "scale":  0.47407407407407409,
                                     "y":  640,
                                     "drawSize":  [
                                                      42,
@@ -1120,7 +1121,7 @@ const IrisAtlas = {
                                     "column":  1
                                 },
                                 {
-                                    "scale":  0.4740740740740741,
+                                    "scale":  0.47407407407407409,
                                     "y":  640,
                                     "drawSize":  [
                                                      39,
@@ -1219,7 +1220,7 @@ const IrisAtlas = {
                                     "column":  4
                                 },
                                 {
-                                    "scale":  0.4740740740740741,
+                                    "scale":  0.47407407407407409,
                                     "y":  640,
                                     "drawSize":  [
                                                      36,
@@ -1285,7 +1286,7 @@ const IrisAtlas = {
                                     "column":  0
                                 },
                                 {
-                                    "scale":  0.4740740740740741,
+                                    "scale":  0.47407407407407409,
                                     "y":  768,
                                     "drawSize":  [
                                                      44,
@@ -1647,10 +1648,15 @@ const IrisAtlas = {
                                                      ],
                                     "column":  5
                                 }
-                            ]
+                            ],
+                 "sourceSHA256":  "A4EFC2F2EC266940821046634E04FE750A1224E617CBBDE4A59377BA7CFC3B89",
+                 "sourceSize":  [
+                                    1287,
+                                    1222
+                                ]
              },
     "attack":  {
-                   "fps":  12.5,
+                   "source":  "assets/characters/iris/iris_attack.png",
                    "idleColumns":  [
                                        0,
                                        0,
@@ -1661,8 +1667,6 @@ const IrisAtlas = {
                                        0,
                                        0
                                    ],
-                   "source":  "assets/characters/iris/iris_attack.png",
-                   "sourceSHA256":  "82A9867F44954D857A9934B283D1233894A6FDD1AFE3171F449A7E05023EDBFE",
                    "rowMap":  [
                                   0,
                                   1,
@@ -1674,6 +1678,7 @@ const IrisAtlas = {
                                   7
                               ],
                    "columns":  4,
+                   "fps":  12.5,
                    "referenceBodyHeight":  149,
                    "frames":  [
                                   {
@@ -2732,6 +2737,11 @@ const IrisAtlas = {
                                                        ],
                                       "column":  3
                                   }
-                              ]
+                              ],
+                   "sourceSHA256":  "82A9867F44954D857A9934B283D1233894A6FDD1AFE3171F449A7E05023EDBFE",
+                   "sourceSize":  [
+                                      887,
+                                      1774
+                                  ]
                }
 };

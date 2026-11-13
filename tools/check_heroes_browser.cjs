@@ -37,8 +37,9 @@ async function connect(url){
     await tab.send('Fetch.fulfillRequest',{requestId:m.params.requestId,responseCode:200,responseHeaders:[{name:'Content-Type',value:'application/javascript'}],body:Buffer.from(source).toString('base64')});
    }
   });
-  await tab.send('Page.enable');await tab.send('Runtime.enable');await tab.send('Network.enable');await tab.send('Fetch.enable',{patterns:[{urlPattern:'*/js/main.js*',requestStage:'Request'}]});
-  async function ev(expression){const r=await tab.send('Runtime.evaluate',{expression:'(()=>eval('+JSON.stringify(expression)+'))()',returnByValue:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value}
+  await tab.send('Page.enable');await tab.send('Runtime.enable');await tab.send('Network.enable');await tab.send('Network.setCacheDisabled',{cacheDisabled:true});await tab.send('Fetch.enable',{patterns:[{urlPattern:'*/js/main.js*',requestStage:'Request'}]});
+  await tab.send('Page.addScriptToEvaluateOnNewDocument',{source:`window.actualHeroImages=new Set();const originalDrawImage=CanvasRenderingContext2D.prototype.drawImage;CanvasRenderingContext2D.prototype.drawImage=function(image,...args){if(image.src?.includes('/characters/'))actualHeroImages.add(image.src);return originalDrawImage.call(this,image,...args)};`});
+  async function ev(expression){const r=await tab.send('Runtime.evaluate',{expression:'(()=>eval('+JSON.stringify(expression)+'))()',returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value}
   async function shot(name){
    if(!name.includes('preview')){const data=await ev('heroProbe.draw();document.querySelector("#game").toDataURL("image/png")');const b=Buffer.from(data.split(',')[1],'base64');assert(b.length>10000,'empty game capture '+name);fs.writeFileSync(path.join(__dirname,name),b);return}
    const r=await tab.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});fs.writeFileSync(path.join(__dirname,name),Buffer.from(r.data,'base64'));
@@ -46,6 +47,10 @@ async function connect(url){
   await tab.send('Emulation.setDeviceMetricsOverride',{width:1536,height:1000,deviceScaleFactor:1,mobile:false});
   await tab.send('Page.navigate',{url:base+'/index.html'});
   await until(()=>ev('typeof heroProbe!=="undefined"&&[NopalSprite,RosaSprite,BentoSprite,IrisSprite].every(s=>s.status().ready)&&WeaponSprites.ready()'),'all PNGs');
+  await tab.send('Page.reload',{ignoreCache:true});
+  await until(()=>ev('performance.getEntriesByType("navigation")[0]?.type==="reload"&&typeof heroProbe!=="undefined"&&[NopalSprite,RosaSprite,BentoSprite,IrisSprite].every(s=>s.status().ready)&&WeaponSprites.ready()'),'hard reload PNGs');
+  const loadingReport=await ev(`({entry:location.href,scripts:[...document.scripts].filter(s=>s.src).map(s=>s.src),characters:[NopalSprite,RosaSprite,BentoSprite,IrisSprite].map(s=>s.status())})`);
+  for(const hero of loadingReport.characters)for(const image of hero.images){assert(image.loaded);assert(image.url.includes(image.sha256.slice(0,12)));assert.equal(new URL(image.url).searchParams.get('v'),image.sha256)}
   assert(await ev('document.querySelector("#game").width>1000&&document.querySelector("#game").height>500'));
   await ev('window.dispatchEvent(new KeyboardEvent("keydown",{key:"Enter"}));heroProbe.draw()');await shot('heroes-selection.generated.png');
   const dirs=[['s'],['s','a'],['a'],['w','a'],['w'],['w','d'],['d'],['s','d']];
@@ -74,12 +79,34 @@ async function connect(url){
    assert(await ev('const before=JSON.stringify(g);heroProbe.draw();before===JSON.stringify(g)'));
    assert(await ev('heroProbe.setScreen("pause");const before=g.time;heroProbe.update(.2);before===g.time'));
   }
+  loadingReport.drawn=await ev('[...actualHeroImages]');assert.equal(loadingReport.drawn.length,8);
+  assert(loadingReport.drawn.every(s=>/\/(walk|attack)_normalized\.[a-f0-9]{12}\.png/.test(s)));
+  fs.writeFileSync(path.join(__dirname,'hero-loading.generated.json'),JSON.stringify(loadingReport,null,2));
+  // Source crops next to the actual sprite renderer, all eight directions.
+  const comparison=await ev(`(async()=>{
+   const ids=['nopal','rosa','bento','iris'],metas=[NopalAtlas,RosaAtlas,BentoAtlas,IrisAtlas],sprites=[NopalSprite,RosaSprite,BentoSprite,IrisSprite];
+   const c=document.createElement('canvas');c.width=2048;c.height=1408;const ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.fillStyle='#242830';ctx.fillRect(0,0,c.width,c.height);
+   for(let i=0;i<4;i++)for(const [stateIndex,state] of ['walk','attack'].entries()){
+    const meta=metas[i],source=new Image();source.src=new URL(meta[state].source,document.baseURI).href;await source.decode();
+    for(let dir=0;dir<8;dir++){
+     const x=dir*256,y=(i*2+stateIndex)*176,f=meta[state].frames[dir*meta[state].columns+1];
+     ctx.fillStyle='#efdbb4';ctx.font='12px monospace';ctx.fillText(ids[i]+' '+state+' dir '+dir,x+4,y+16);
+     ctx.fillStyle='#527354';ctx.fillRect(x+10,y+112,236,1);
+     ctx.drawImage(source,...f.sourceRect,x+f.offset[0],y+24+f.offset[1],...f.drawSize);
+     const p={characterId:ids[i],visualDirection:dir,visualMoving:true,visualWalkTime:.11,heroAttackAt:state==='attack'?0:-Infinity,heroAttackAngle:Math.PI/2+dir*Math.PI/4};
+     sprites[i].draw(ctx,p,x+192,y+90,.1);
+     ctx.fillStyle='#baa98b';ctx.fillText('origem',x+38,y+160);ctx.fillText('renderizado',x+150,y+160);
+    }
+   }return c.toDataURL('image/png');
+  })()`);
+  fs.writeFileSync(path.join(__dirname,'heroes-source-comparison.generated.png'),Buffer.from(comparison.split(',')[1],'base64'));
   await tab.send('Page.navigate',{url:base+'/tools/hero-preview.html'});await until(()=>ev('typeof sprites!=="undefined"&&sprites.every(s=>s.status().ready)'),'preview');await ev('time=.8;paused=true');await sleep(100);
   await tab.send('Emulation.setDeviceMetricsOverride',{width:1576,height:1550,deviceScaleFactor:1,mobile:false});await shot('heroes-preview.generated.png');
   await tab.send('Fetch.disable');
   for(const entry of ['index.html','luciusrepositorio/index.html']){
    await tab.send('Page.navigate',{url:pathToFileURL(path.join(root,entry)).href});
    await until(()=>ev('typeof NopalSprite!=="undefined"&&[NopalSprite,RosaSprite,BentoSprite,IrisSprite].every(s=>s.status().ready)'),'unmodified file entry '+entry);
+   assert.equal(await ev('location.pathname.replaceAll("\\\\","/").endsWith("/luciusbyfroty/index.html")'),true,'historical entry must reach the real root index');
    await ev('window.dispatchEvent(new KeyboardEvent("keydown",{key:"Enter"}));window.dispatchEvent(new KeyboardEvent("keyup",{key:"Enter"}))');
    await sleep(150);const r=await tab.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});const b=Buffer.from(r.data,'base64');assert(b.length>10000);fs.writeFileSync(path.join(__dirname,entry.startsWith('lucius')?'heroes-redirect.generated.png':'heroes-selection.generated.png'),b);
   }

@@ -72,7 +72,7 @@ async function connect(url){
      const srcs=[],sizes=[],old=CanvasRenderingContext2D.prototype.drawImage;
      CanvasRenderingContext2D.prototype.drawImage=function(image,...args){srcs.push(image.src||'canvas');if(image.src?.includes('/weapons_8directions.png')){const m=this.getTransform();sizes.push({crop:args.slice(0,4),w:args[6],h:args[7],a:m.a,d:m.d})}return old.call(this,image,...args)};
      try{f.draw()}finally{CanvasRenderingContext2D.prototype.drawImage=old}
-     if(srcs.some(s=>s.includes('/characters/')&&!s.includes('/walk_normalized.png')&&!s.includes('/attack_normalized.png')))throw Error('unexpected hero layer');
+     if(srcs.some(s=>s.includes('/characters/')&&!/\/(walk|attack)_normalized\.[a-f0-9]{12}\.png/.test(s)))throw Error('unexpected hero layer');
      if(JSON.stringify(g)!==before)throw Error('drawing mutated gameplay');
      for(const s of sizes){
       const entry=Object.entries(WeaponAtlas.weapons).find(([id,data])=>data.frames.some(frame=>frame.x===s.crop[0]&&frame.y===s.crop[1]));

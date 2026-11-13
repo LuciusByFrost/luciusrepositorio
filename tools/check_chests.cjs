@@ -38,10 +38,10 @@ while(expectedXP>=expectedNeed){expectedXP-=expectedNeed;expectedNeed=Math.floor
 c=Ch.create(0,0,'boss');p.openChest(c);equal([g.level,g.xp,g.xpNeed],[expectedLevel,expectedXP,expectedNeed]);equal(drain(),levels);
 
 // Original weapon evolution and heal/upgrade remain alongside XP.
-g=fresh();g.weapons.revolver.level=3;p.openChest(Ch.create(0,0));ok(g.weapons.revolver.evolved);equal(g.weapons.revolver.level,5);equal(g.player.damage,1.12);
+g=fresh();g.weapons.revolver.level=3;p.openChest(Ch.create(0,0));ok(g.weapons.revolver.evolved);equal(g.weapons.revolver.level,5);equal(g.player.damage,1);
 g=fresh();g.weapons.solar.level=3;p.openChest(Ch.create(0,0,'boss'));ok(g.weapons.solar.evolved);equal(g.weapons.solar.level,5);
-g=fresh();g.player.hp=50;for(const w of Object.values(g.weapons))w.level=8;
-p.openChest(Ch.create(0,0));equal(g.player.hp,85);equal(g.level,2);ok(Object.values(g.weapons).every(w=>w.level===8));
+g=fresh();g.player.hp=50;for(const w of Object.values(g.weapons))w.level=w.max;
+p.openChest(Ch.create(0,0));equal(g.player.hp,85);equal(g.level,2);ok(Object.values(g.weapons).every(w=>w.level===w.max));
 
 // Real pickup consumes a chest once, and E only interacts with knowledge chests.
 g=fresh();c=Ch.create(0,0);g.chests=[c];p.update(.01);equal(g.chests.length,0);equal(g.level,2);equal(g.chestBursts.length,1);

@@ -2,11 +2,11 @@
 <style>body{background:#242830;color:#efdbb4;font:15px monospace;margin:20px}canvas{image-rendering:pixelated;max-width:100%;height:auto}button{font:inherit;padding:8px}a{color:#deb67b}</style>
 <p>Quatro personagens × oito direções. Em cada grupo: repouso, caminhada, ataque e transição automática (anda → ataca → anda → para). Linha verde: apoio dos pés. Espaço: pausar.</p>
 <button id="pause">Pausar</button> <a href="../index.html">Abrir jogo</a><p id="status">Carregando…</p><canvas width="1536" height="1376"></canvas>
-<script src="../js/hero_sprite.js"></script>
-<script src="../assets/characters/nopal/atlas.js?v=attack-zip-2"></script><script src="../js/nopal_sprite.js?v=attack-zip-2"></script>
-<script src="../assets/characters/rosa/atlas.js?v=attack-zip-2"></script><script src="../js/rosa_sprite.js?v=attack-zip-2"></script>
-<script src="../assets/characters/bento/atlas.js?v=attack-zip-2"></script><script src="../js/bento_sprite.js?v=attack-zip-2"></script>
-<script src="../assets/characters/iris/atlas.js?v=attack-zip-2"></script><script src="../js/iris_sprite.js?v=attack-zip-2"></script>
+<script src="../js/hero_sprite.js?v=9be5f12971d1"></script>
+<script src="../assets/characters/nopal/atlas.js?v=f9db617f531f"></script><script src="../js/nopal_sprite.js?v=aa68fd04f9b2"></script>
+<script src="../assets/characters/rosa/atlas.js?v=0603495db605"></script><script src="../js/rosa_sprite.js?v=4b9fb126db58"></script>
+<script src="../assets/characters/bento/atlas.js?v=13d99570e133"></script><script src="../js/bento_sprite.js?v=91dee4334da2"></script>
+<script src="../assets/characters/iris/atlas.js?v=35b7ec3ecb8e"></script><script src="../js/iris_sprite.js?v=542cecf246bf"></script>
 <script>
 const sprites=[NopalSprite,RosaSprite,BentoSprite,IrisSprite],ids=['nopal','rosa','bento','iris'],g=document.querySelector('canvas').getContext('2d');let time=0,previous=0,paused=false;
 function toggle(){paused=!paused;document.querySelector('button').textContent=paused?'Continuar':'Pausar'}

@@ -3,41 +3,65 @@
 const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d'),toast=document.querySelector('#toast'),touch=document.querySelector('#touch'),knob=touch.querySelector('i'),interactButton=document.querySelector('#interact');
 const TAU=Math.PI*2, clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), rand=(a,b)=>a+Math.random()*(b-a), choose=a=>a[Math.floor(Math.random()*a.length)], dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 let W=960,H=600,dpr=1,screen='title',last=0,keys=new Set(),pointer={x:0,y:0,down:false},audioOn=true,audioCtx=null,stick={x:0,y:0},camera={x:0,y:0},shake=0,toastUntil=0;
-let selectedCharacterId;
-const save=readSave();selectedCharacterId=CharacterRoster.get(save.characterId).id;function readSave(){try{return Object.assign({best:0,sound:true},JSON.parse(localStorage.getItem('cactus-save')||'{}'))}catch{return{best:0,sound:true}}}function persist(){try{localStorage.setItem('cactus-save',JSON.stringify(save))}catch{}}
+let selectedCharacterId,selectedDifficulty='normal';
+const save=readSave();selectedDifficulty=save.difficulty==='nohit'?'nohit':'normal';selectedCharacterId=CharacterRoster.get(save.characterId).id;function readSave(){try{return Object.assign({best:0,sound:true},JSON.parse(localStorage.getItem('cactus-save')||'{}'))}catch{return{best:0,sound:true}}}function persist(){try{localStorage.setItem('cactus-save',JSON.stringify(save))}catch{}}
+const MAX_DAMAGE_REDUCTION=.35,MAX_WEAPON_LEVEL=10,MAX_DAMAGE_UPGRADES=10;
+const WEAPON_DAMAGE_STEP=.10,GLOBAL_DAMAGE_STEP=.05;
 const weaponDefs={
- revolver:{name:'Revólver do Deserto',icon:'✦',desc:'Disparo preciso no alvo mais próximo.',cd:.8,damage:16,range:430,qty:1,speed:560,color:'#ffd36a',level:1,max:8},
- shotgun:{name:'Espingarda Serrada',icon:'✹',desc:'Leque de chumbo a curta distância.',cd:2.1,damage:11,range:260,qty:5,speed:420,color:'#ff9b52',level:0,max:8},
- dynamite:{name:'Dinamite',icon:'♨',desc:'Explosão de pólvora com amplo raio e alto dano.',cd:4.2,damage:70,range:360,qty:1,speed:210,color:'#f36c45',level:0,max:8},
- thorns:{name:'Cacto Giratório',icon:'❋',desc:'Espinhos orbitais ferem ao tocar.',cd:.42,damage:12,range:70,qty:2,speed:0,color:'#9df078',level:0,max:8},
- lasso:{name:'Laço Elétrico',icon:'ϟ',desc:'Descargas saltam entre inimigos.',cd:3.4,damage:22,range:250,qty:3,speed:0,color:'#8be9ff',level:0,max:8},
- rain:{name:'Chuva de Balas',icon:'☄',desc:'Rajada circular de projéteis.',cd:6.5,damage:13,range:340,qty:10,speed:500,color:'#ffe58a',level:0,max:8},
- meteor:{name:'Meteoro de Ouro',icon:'★',desc:'Pedras flamejantes caem do céu.',cd:5.8,damage:48,range:330,qty:2,speed:0,color:'#ffb94e',level:0,max:8},
- solar:{name:'Canhão Sol Dourado',icon:'✷',desc:'Raio lendário perfurante que atravessa a horda.',cd:2.7,damage:86,range:680,qty:1,speed:780,color:'#ffe675',level:0,max:8,legendary:true}
+ revolver:{name:'Revólver do Deserto',icon:'✦',desc:'Disparo preciso no alvo mais próximo.',cd:.8,damage:16,range:430,qty:1,speed:560,color:'#ffd36a',level:1,max:MAX_WEAPON_LEVEL},
+ shotgun:{name:'Espingarda Serrada',icon:'✹',desc:'Leque de chumbo a curta distância.',cd:2.1,damage:11,range:260,qty:5,speed:420,color:'#ff9b52',level:0,max:MAX_WEAPON_LEVEL},
+ dynamite:{name:'Dinamite',icon:'♨',desc:'Explosão de pólvora com amplo raio e alto dano.',cd:4.2,damage:50,range:360,qty:1,speed:210,color:'#f36c45',level:0,max:MAX_WEAPON_LEVEL},
+ thorns:{name:'Cacto Giratório',icon:'❋',desc:'Espinhos orbitais ferem ao tocar.',cd:.42,damage:12,range:70,qty:2,speed:0,color:'#9df078',level:0,max:MAX_WEAPON_LEVEL},
+ lasso:{name:'Laço Elétrico',icon:'ϟ',desc:'Descargas saltam entre inimigos.',cd:3.4,damage:22,range:250,qty:3,speed:0,color:'#8be9ff',level:0,max:MAX_WEAPON_LEVEL},
+ rain:{name:'Chuva de Balas',icon:'☄',desc:'Rajada circular de projéteis.',cd:6.5,damage:13,range:340,qty:10,speed:500,color:'#ffe58a',level:0,max:MAX_WEAPON_LEVEL},
+ meteor:{name:'Meteoro de Ouro',icon:'★',desc:'Pedras flamejantes caem do céu.',cd:5.8,damage:48,range:330,qty:2,speed:0,color:'#ffb94e',level:0,max:MAX_WEAPON_LEVEL},
+ solar:{name:'Canhão Sol Dourado',icon:'✷',desc:'Raio lendário perfurante que atravessa a horda.',cd:2.7,damage:86,range:680,qty:1,speed:780,color:'#ffe675',level:0,max:MAX_WEAPON_LEVEL,legendary:true}
 };
 const upgradePool=[
- {name:'Pólvora Fina',desc:'+20% de dano em todas as armas.',rarity:'Comum',icon:'✹',apply:g=>g.player.damage*=1.2},
+ {name:'Pólvora Fina',desc:'+5% de dano base em todas as armas (máx. 10 escolhas).',rarity:'Comum',icon:'✹',damageUpgrade:true,apply:g=>g.player.damage+=GLOBAL_DAMAGE_STEP},
  {name:'Mão Leve',desc:'+15% de velocidade de ataque.',rarity:'Incomum',icon:'⌁',apply:g=>g.player.attackSpeed*=1.15},
  {name:'Botas de Poeira',desc:'+12% de velocidade de movimento.',rarity:'Comum',icon:'➤',apply:g=>g.player.speed*=1.12},
  {name:'Bolso Magnético',desc:'+30% de alcance de coleta.',rarity:'Comum',icon:'◎',apply:g=>g.player.magnet*=1.3},
- {name:'Coração de Nopal',desc:'+20% de vida máxima e recupera 20%.',rarity:'Incomum',icon:'♥',apply:g=>{g.player.maxHp*=1.2;g.player.hp=Math.min(g.player.maxHp,g.player.hp+g.player.maxHp*.2)}},
+ {name:'Coração de Nopal',desc:'+20% de vida máxima e recupera 20%.',rarity:'Incomum',icon:'♥',survivalUpgrade:true,apply:g=>{g.player.maxHp*=1.2;g.player.hp=Math.min(g.player.maxHp,g.player.hp+g.player.maxHp*.2)}},
  {name:'Olho de Águia',desc:'+6% de chance crítica.',rarity:'Rara',icon:'◉',apply:g=>g.player.crit+=.06},
- {name:'Casca Grossa',desc:'+10% de redução de dano.',rarity:'Incomum',icon:'⬟',apply:g=>g.player.armor=Math.min(.55,g.player.armor+.1)},
+ {name:'Casca Grossa',desc:'+10% de redução de dano (máx. 35%).',rarity:'Incomum',icon:'⬟',armorUpgrade:true,apply:g=>g.player.armor=Math.min(MAX_DAMAGE_REDUCTION,g.player.armor+.1)},
  {name:'Sorte do Forasteiro',desc:'+15% de sorte: melhores ofertas e gemas.',rarity:'Rara',icon:'♣',apply:g=>g.player.luck+=.15},
- {name:'Regeneração',desc:'+1.2 vida por segundo.',rarity:'Incomum',icon:'✚',apply:g=>g.player.regen+=1.2},
+ {name:'Regeneração',desc:'+1.2 vida por segundo.',rarity:'Incomum',icon:'✚',survivalUpgrade:true,apply:g=>g.player.regen+=1.2},
  {name:'Munição Perfurante',desc:'Revólver atravessa +1 inimigo.',rarity:'Rara',icon:'➶',weapon:'revolver',apply:g=>g.player.pierce++},
  {name:'Cartucho Extra',desc:'Espingarda dispara +2 projéteis.',rarity:'Incomum',weapon:'shotgun',icon:'✹',apply:g=>g.weapons.shotgun.qty+=2},
  {name:'Pavio Longo',desc:'Explosões +25% de área.',rarity:'Rara',weapon:'dynamite',icon:'♨',apply:g=>g.player.area*=1.25},
  {name:'Corrente Viva',desc:'Laço salta para +2 alvos.',rarity:'Épica',weapon:'lasso',icon:'ϟ',apply:g=>g.weapons.lasso.qty+=2},
  {name:'Núcleo de Ouro',desc:'Meteoro +1 impacto por salva.',rarity:'Épica',weapon:'meteor',icon:'★',apply:g=>g.weapons.meteor.qty++},
- {name:'Frasco de Tônico',desc:'Recupera 35% da vida máxima.',rarity:'Comum',icon:'⚗',apply:g=>g.player.hp=Math.min(g.player.maxHp,g.player.hp+g.player.maxHp*.35)}
+ {name:'Frasco de Tônico',desc:'Recupera 35% da vida máxima.',rarity:'Comum',icon:'⚗',survivalUpgrade:true,apply:g=>g.player.hp=Math.min(g.player.maxHp,g.player.hp+g.player.maxHp*.35)}
 ];
 let game;
+const MAX_GAME_SECONDS=900;
 const BOSS_ENEMY_CAP=14;
+const ENEMY_LEVEL_INTERVAL=300;
+const ENEMY_LEVELS=[
+ {health:1,damage:1,resistance:0,extraProjectiles:0},
+ {health:1.5,damage:1.35,resistance:.15,extraProjectiles:0},
+ {health:2,damage:1.7,resistance:.30,extraProjectiles:1}
+];
+function enemyLevelFor(time){return Math.min(ENEMY_LEVELS.length,Math.floor(time/ENEMY_LEVEL_INTERVAL)+1)}
+function setEnemyLevel(e,level){
+ if(e.hp<=0)return;
+ const previous=ENEMY_LEVELS[(e.level||1)-1],next=ENEMY_LEVELS[level-1];
+ // Preserve health percentage: leveling up cannot heal existing wounds.
+ const healthRatio=next.health/previous.health;
+ e.hp*=healthRatio;e.maxHp*=healthRatio;e.damage*=next.damage/previous.damage;
+ e.level=level;e.resistance=next.resistance;e.levelDamageMultiplier=next.damage;e.extraProjectiles=next.extraProjectiles;
+}
+function updateEnemyLevels(g){
+ const level=enemyLevelFor(g.time),changed=level!==g.enemyLevel;
+ g.enemyLevel=level;
+ for(const e of g.enemies)if(e.level!==level)setEnemyLevel(e,level);
+ return changed;
+}
 const bossApi={shoot:shootHostile,spawn:spawnEnemy,hurt:hurtPlayer};
 // Keep bushes unchanged; retain only the rarest third of decorative cacti.
 const MAP_CACTUS_THRESHOLD=.98;
-function newGame(characterId=selectedCharacterId){const hero=CharacterRoster.get(characterId);selectedCharacterId=hero.id;game={time:0,waveTime:0,kills:0,stage:1,spawn:0,boss:null,bossWave:false,level:1,xp:0,xpNeed:12,choices:[],pendingUpgrades:0,chests:[],player:{characterId:hero.id,startWeapon:hero.weapon,x:0,y:0,r:15,hp:100,maxHp:100,speed:205,damage:1,attackSpeed:1,magnet:120,crit:.05,critMult:1.8,armor:0,regen:0,luck:0,pierce:0,area:1,invuln:0,facing:1,walk:0,attack:0},weapons:{},enemies:[],shots:[],hostile:[],gems:[],particles:[],floaters:[],hazards:[],nextBoss:65};for(const [id,d] of Object.entries(weaponDefs))game.weapons[id]={...d,level:0,cool:rand(.1,.5),angle:0,evolved:false};game.weapons[hero.weapon].level=1;save.characterId=hero.id;persist();keys.clear();stick.x=stick.y=0;knob.style.transform='translate(0,0)';game.elements=ElementSystem.create();camera.x=camera.y=0;shake=0;screen='playing';say('O DESERTO NÃO PERDOA',1800);sound(220,.12);EnemySprites.reset()}
+function newGame(characterId=selectedCharacterId,difficulty=selectedDifficulty){selectedDifficulty=difficulty==='nohit'?'nohit':'normal';const hero=CharacterRoster.get(characterId);selectedCharacterId=hero.id;game={difficulty:selectedDifficulty,time:0,enemyLevel:1,completed:false,victory:false,upgradeCounts:{},waveTime:0,kills:0,stage:1,spawn:0,boss:null,bossWave:false,level:1,xp:0,xpNeed:12,choices:[],pendingUpgrades:0,chests:[],player:{characterId:hero.id,startWeapon:hero.weapon,x:0,y:0,r:15,hp:selectedDifficulty==='nohit'?1:100,maxHp:selectedDifficulty==='nohit'?1:100,speed:205,damage:1,attackSpeed:1,magnet:120,crit:.05,critMult:1.8,armor:0,regen:0,luck:0,pierce:0,area:1,invuln:0,facing:1,walk:0,attack:0},weapons:{},enemies:[],shots:[],hostile:[],gems:[],particles:[],floaters:[],hazards:[],nextBoss:65};for(const [id,d] of Object.entries(weaponDefs))game.weapons[id]={...d,level:0,cool:rand(.1,.5),angle:0,evolved:false};game.weapons[hero.weapon].level=1;save.characterId=hero.id;save.difficulty=selectedDifficulty;persist();keys.clear();stick.x=stick.y=0;knob.style.transform='translate(0,0)';game.elements=ElementSystem.create();camera.x=camera.y=0;shake=0;screen='playing';say('O DESERTO NÃO PERDOA',1800);sound(220,.12);EnemySprites.reset()}
 function say(t,ms=1500){toast.textContent=t;toastUntil=performance.now()+ms}
 function sound(freq=260,dur=.08,type='square'){if(!audioOn)return;try{audioCtx ||= new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const o=audioCtx.createOscillator(),v=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(freq,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(Math.max(40,freq*.45),audioCtx.currentTime+dur);v.gain.setValueAtTime(.055,audioCtx.currentTime);v.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);o.connect(v);v.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+dur)}catch{}}
 function resize(){const r=canvas.getBoundingClientRect();dpr=1;canvas.width=Math.max(1,Math.round(r.width*dpr));canvas.height=Math.max(1,Math.round(r.height*dpr));W=r.width;H=r.height;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.imageSmoothingEnabled=false}window.addEventListener('resize',resize);resize();
@@ -46,6 +70,7 @@ function handleGameKeyDown(e){
  if(e.repeat&&['Enter',' '].includes(e.key)&&['title','characters','dead'].includes(screen))return;
  if(screen==='characters'){
   if(e.key==='Escape'){screen='title';return}
+  if(e.key.toLowerCase()==='d'&&!e.repeat){selectedDifficulty=selectedDifficulty==='nohit'?'normal':'nohit';return}
   const numeric=['1','2','3','4'].indexOf(e.key);
   if(numeric>=0){selectedCharacterId=CharacterRoster.list[numeric].id;return}
   const index=CharacterRoster.list.findIndex(c=>c.id===selectedCharacterId),cols=CharacterRoster.layout(W,H).columns;
@@ -71,17 +96,19 @@ function addParticle(x,y,color,n=5,power=90){for(let i=0;i<n;i++){const a=rand(0
 function knowledgeChestSpotIsClear(x,y){const g=game;if(dist({x,y},g.player)<108)return false;if(g.enemies.some(e=>e.hp>0&&Math.hypot(e.x-x,e.y-y)<52))return false;if(g.chests.some(c=>!c.dead&&Math.hypot(c.x-x,c.y-y)<72))return false;const tx=Math.floor(x/64),ty=Math.floor(y/64);for(let oy=-1;oy<=1;oy++)for(let ox=-1;ox<=1;ox++){const wx=(tx+ox)*64,wy=(ty+oy)*64,seed=Math.abs(Math.sin(wx*12.989+wy*78.233)*43758.5453)%1;if(seed>.78){const px=wx+12+(seed*47)%39,py=wy+44;if(Math.hypot(px-x,py-y)<(seed>.94?43:29))return false}}return true}
 function spawnKnowledgeChest(){const g=game,p=g.player,maxR=Math.min(250,Math.min(W,H)*.4);for(let tries=0;tries<48;tries++){const a=rand(0,TAU),r=rand(Math.min(125,maxR*.72),maxR),x=p.x+Math.cos(a)*r,y=p.y+Math.sin(a)*r,sx0=x-camera.x+W/2,sy0=y-camera.y+H/2;if(sx0<38||sx0>W-38||sy0<48||sy0>H-30||!knowledgeChestSpotIsClear(x,y))continue;const chest=KnowledgeChestSystem.create(x,y,++g.knowledgeChestId);chest.knowledge=true;chest.special=true;g.chests.push(chest);addParticle(x,y,'#ffe675',18,115);addParticle(x,y,'#f0bd63',10,70);say('BAÚ DO CONHECIMENTO POR PERTO — APERTE E',2700);sound(740,.24,'sine');return true}return false}
 function spawnEnemy(type){
+ if(game.completed)return null;
  const custom=BossSystem.isNew(type),isBoss=type==='boss'||custom;
  if(game.bossWave&&!isBoss&&game.enemies.filter(e=>e.hp>0).length>=BOSS_ENEMY_CAP)return null;
  const p=game.player,a=rand(0,TAU),r=Math.max(W,H)*.63+rand(30,150),x=p.x+Math.cos(a)*r,y=p.y+Math.sin(a)*r,scale=1+game.time*.0018;
  const defs={bandit:[24,68,9,12,'#a95138'],runner:[15,126,7,10,'#e17b48'],gunslinger:[28,48,7,10,'#548397'],brute:[105,31,19,17,'#68504b'],gravedigger:[75,40,13,13,'#6e526f'],armored:[72,48,14,14,'#b58d50'],boss:[780+game.time*3,36,28,31,'#46333b']};
  const d=custom?BossSystem.stats(type,game.time):defs[type]||defs.bandit;
  const e={type:custom?'boss':type,x,y,hp:d[0]*scale,maxHp:d[0]*scale,speed:d[1]*(1+game.time*.0004),damage:d[2]*(1+game.time*.001),r:d[3],color:d[4],cd:rand(1,3),attack:rand(1,3),phase:0,hit:0,knock:0,anim:rand(0,TAU),boss:isBoss,summon:6};
- if(custom)BossSystem.configure(e,type);game.enemies.push(e);return e;
+ if(custom)BossSystem.configure(e,type);setEnemyLevel(e,enemyLevelFor(game.time));game.enemies.push(e);return e;
 }
 function openCharacterSelect(){keys.clear();stick.x=stick.y=0;knob.style.transform='translate(0,0)';screen='characters'}
 function handleCharacterClick(point){
  const layout=CharacterRoster.layout(W,H);
+ for(const option of layout.difficulties)if(CharacterRoster.inside(point,option)){selectedDifficulty=option.id;return}
  for(const card of layout.cards)if(CharacterRoster.inside(point,card)){selectedCharacterId=card.id;return}
  if(CharacterRoster.inside(point,layout.start))newGame();else if(CharacterRoster.inside(point,layout.back))screen='title';
 }
@@ -90,9 +117,14 @@ function drawCharacterPreview(hero,x,y,scale=1,t=performance.now()/1000){
  drawPlayer({characterId:hero.id,startWeapon:hero.weapon,heldWeapon:hero.weapon,visualTime:t,x:camera.x-W/2,y:camera.y-H/2,facing:1,walk:0,invuln:0,attack:0,muzzleFlash:0});
  ctx.restore();
 }
-function drawCharacterSelect(){CharacterRoster.draw(ctx,W,H,selectedCharacterId,drawCharacterPreview,weaponDefs,performance.now()/1000)}
+function drawCharacterSelect(){CharacterRoster.draw(ctx,W,H,selectedCharacterId,drawCharacterPreview,weaponDefs,performance.now()/1000,selectedDifficulty)}
 function stageFor(t){return Math.floor(t/45)+1}
-function update(dt){if(screen!=='playing')return;const g=game,p=g.player;g.time+=dt;ChestSystem.tick(g);ElementSystem.tick(g,dt,damageEnemy);if(g.weaponFx)g.weaponFx=g.weaponFx.filter(f=>g.time-f.start<.6);if(g.lassoArcs)g.lassoArcs=g.lassoArcs.filter(a=>g.time-a.start<.36);if(g.nextKnowledgeChest==null){g.nextKnowledgeChest=g.time+rand(32,52);g.knowledgeUsed=new Set();g.knowledgeChestId=0}if(!g.bossWave)g.waveTime+=dt;const previousStage=g.stage;g.stage=stageFor(g.waveTime);p.invuln=Math.max(0,p.invuln-dt);p.attack=Math.max(0,p.attack-dt);p.muzzleFlash=Math.max(0,(p.muzzleFlash||0)-dt);p.weaponPose=Math.max(0,(p.weaponPose||0)-dt);if(!p.weaponPose){p.heldWeapon=p.startWeapon||'revolver';p.weaponAngle=p.facing<0?Math.PI:0}p.hp=Math.min(p.maxHp,p.hp+p.regen*dt);p.walk+=dt*12;
+function update(dt){if(screen!=='playing'||game.completed)return;const g=game,p=g.player;
+ // Only active simulation time counts; waveTime intentionally stops during bosses.
+ g.time+=dt;
+ if(g.time>=MAX_GAME_SECONDS){g.time=MAX_GAME_SECONDS;endGame(true);return}
+ const enemyLevelChanged=updateEnemyLevels(g);
+ ChestSystem.tick(g);ElementSystem.tick(g,dt,damageEnemy);if(g.weaponFx)g.weaponFx=g.weaponFx.filter(f=>g.time-f.start<.6);if(g.lassoArcs)g.lassoArcs=g.lassoArcs.filter(a=>g.time-a.start<.36);if(g.nextKnowledgeChest==null){g.nextKnowledgeChest=g.time+rand(32,52);g.knowledgeUsed=new Set();g.knowledgeChestId=0}if(!g.bossWave)g.waveTime+=dt;const previousStage=g.stage;g.stage=stageFor(g.waveTime);p.invuln=Math.max(0,p.invuln-dt);p.attack=Math.max(0,p.attack-dt);p.muzzleFlash=Math.max(0,(p.muzzleFlash||0)-dt);p.weaponPose=Math.max(0,(p.weaponPose||0)-dt);if(!p.weaponPose){p.heldWeapon=p.startWeapon||'revolver';p.weaponAngle=p.facing<0?Math.PI:0}if(g.difficulty!=='nohit')p.hp=Math.min(p.maxHp,p.hp+p.regen*dt);p.walk+=dt*12;
  let dx=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0)+stick.x,dy=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0)+stick.y,n=Math.hypot(dx,dy);if(n>1){dx/=n;dy/=n}p.visualMoving=n>0;p.visualWalkTime=n>0?(p.visualWalkTime||0)+dt:0;if(n>0)p.visualDirection=(Math.round(Math.atan2(-dx,dy)/(Math.PI/4))+8)%8;if(dy)p.visualBack=dy<0;p.visualStride=(p.visualStride||0)+Math.min(n,1)*p.speed*dt*.065;p.x+=dx*p.speed*dt;p.y+=dy*p.speed*dt;if(dx)p.facing=Math.sign(dx);camera.x+=(p.x-camera.x)*Math.min(1,dt*8);camera.y+=(p.y-camera.y)*Math.min(1,dt*8);
  const interval=Math.max(.22,1.05-g.stage*.075);if(!g.bossWave){g.spawn-=dt;if(g.spawn<=0){const choices=['bandit','bandit'];if(g.stage>=2)choices.push('runner');if(g.stage>=3)choices.push('gunslinger');if(g.stage>=4)choices.push('brute','armored');if(g.stage>=6)choices.push('gravedigger','armored');for(let i=0;i<Math.min(1+Math.floor(g.stage/4),3);i++)spawnEnemy(choose(choices));g.spawn=interval*rand(.7,1.25)}}if(!g.bossWave&&g.waveTime>=g.nextBoss){g.bossWave=true;g.enemies=g.enemies.filter(e=>e.hp>0).sort((a,b)=>dist(p,a)-dist(p,b)).slice(0,BOSS_ENEMY_CAP-1);g.boss=spawnEnemy(BossSystem.nextType(g));g.nextBoss+=Math.max(72,105-g.stage*2);say(BossSystem.name(g.boss).toUpperCase()+' — ELE CHEGOU!',2500);sound(90,.5,'sawtooth')} if(!g.bossWave&&g.time>=g.nextKnowledgeChest&&!g.chests.some(c=>c.knowledge&&!c.used)){g.nextKnowledgeChest=g.time+rand(65,100);spawnKnowledgeChest()}
  for(const e of g.enemies){
@@ -105,33 +137,33 @@ function update(dt){if(screen!=='playing')return;const g=game,p=g.player;g.time+
    if(e.type==='gunslinger'){
     if(d>245){e.x+=vx/d*e.speed*elementSpeed*dt;e.y+=vy/d*e.speed*elementSpeed*dt}
     else if(d<165){e.x-=vx/d*e.speed*elementSpeed*dt;e.y-=vy/d*e.speed*elementSpeed*dt}
-    if(e.cd<=0&&d<500&&!ElementSystem.frozen(g,e)){shootHostile(e,vx/d,vy/d);e.cd=2.4}
+    if(e.cd<=0&&d<500&&!ElementSystem.frozen(g,e)){const count=1+e.extraProjectiles,base=Math.atan2(vy,vx);for(let i=0;i<count;i++){const a=base+(i-(count-1)/2)*.18;shootHostile(e,Math.cos(a),Math.sin(a))}e.cd=2.4}
    }else{e.x+=vx/d*e.speed*elementSpeed*dt;e.y+=vy/d*e.speed*elementSpeed*dt}
    if(e.boss){
     e.phase+=dt;
     if(e.cd<=0&&!ElementSystem.frozen(g,e)){
-     for(let i=0;i<10;i++){const a=i*TAU/10+e.phase*.25;shootHostile(e,Math.cos(a),Math.sin(a),190,11)}e.cd=2.5;
-     if(e.hp<e.maxHp*.5){for(let i=0;i<8;i++){const a=i*TAU/8;shootHostile(e,Math.cos(a),Math.sin(a),260,13)}e.cd=1.55}
+     const count=10+e.extraProjectiles;for(let i=0;i<count;i++){const a=i*TAU/count+e.phase*.25;shootHostile(e,Math.cos(a),Math.sin(a),190,11)}e.cd=2.5;
+     if(e.hp<e.maxHp*.5){const count=8+e.extraProjectiles;for(let i=0;i<count;i++){const a=i*TAU/count;shootHostile(e,Math.cos(a),Math.sin(a),260,13)}e.cd=1.55}
     }
     e.summon-=dt;if(e.summon<=0){spawnEnemy('runner');spawnEnemy('bandit');e.summon=8}
    }
   }
-  if(d<e.r+p.r+2&&p.invuln<=0&&!ElementSystem.frozen(g,e)){hurtPlayer(e.damage);const kx=vx/d,ky=vy/d;p.x+=kx*12;p.y+=ky*12}
+  if(d<e.r+p.r+2&&p.invuln<=0&&!ElementSystem.frozen(g,e)){hurtPlayer(e.damage);if(g.completed)return;const kx=vx/d,ky=vy/d;p.x+=kx*12;p.y+=ky*12}
  }
  for(const w of Object.values(g.weapons)){w.cool-=dt;w.angle+=dt*(w.id==='thorns'?2:0);if(w.level&&w.cool<=0)fireWeapon(w);}if(p.characterId==='bento'){const bomb=g.weapons.dynamite;p.bentoWindup=!!(bomb.level&&bomb.cool>0&&bomb.cool<=.12)}
  for(const s of g.shots){s.x+=s.vx*dt;s.y+=s.vy*dt;s.life-=dt;if(s.bomb&&s.life<=0)explode(s);else if(!s.bomb){for(const e of g.enemies){if(e.hp<=0||s.hitTargets?.has(e))continue;if(Math.hypot(e.x-s.x,e.y-s.y)<e.r+s.r){damageEnemy(e,s.damage,s.crit,s.visualWeapon);WeaponVisuals.emit(g,'hit',s.x,s.y,Math.atan2(s.vy,s.vx),0,s.visualWeapon);(s.hitTargets||=(new Set())).add(e);s.pierce--;if(s.pierce<0){s.life=0;break}}}}}g.shots=g.shots.filter(s=>s.life>0);
- BossSystem.tickHazards(g,bossApi);
- for(const s of g.hostile){s.x+=s.vx*dt;s.y+=s.vy*dt;s.life-=dt;if(Math.hypot(s.x-p.x,s.y-p.y)<p.r+s.r&&p.invuln<=0){hurtPlayer(s.damage);s.life=0}}g.hostile=g.hostile.filter(s=>s.life>0);
+ BossSystem.tickHazards(g,bossApi);if(g.completed)return;
+ for(const s of g.hostile){s.x+=s.vx*dt;s.y+=s.vy*dt;s.life-=dt;if(Math.hypot(s.x-p.x,s.y-p.y)<p.r+s.r&&p.invuln<=0){hurtPlayer(s.damage);if(g.completed)return;s.life=0}}g.hostile=g.hostile.filter(s=>s.life>0);
  for(const h of g.hazards){h.t+=dt;if(h.t>=h.delay&&!h.done){h.done=true;for(const e of g.enemies)if(Math.hypot(e.x-h.x,e.y-h.y)<h.r+e.r)damageEnemy(e,h.damage,false,'meteor');addParticle(h.x,h.y,'#ffb542',28,180);shake=Math.max(shake,5)}}g.hazards=g.hazards.filter(h=>h.t<h.delay+.25);
  for(const gem of g.gems){gem.bob+=dt*4;const d=Math.hypot(p.x-gem.x,p.y-gem.y);if(d<p.magnet){gem.x+=(p.x-gem.x)*Math.min(1,dt*(5+90/(d+20)));gem.y+=(p.y-gem.y)*Math.min(1,dt*(5+90/(d+20)))}if(d<p.r+gem.r+5){g.xp+=gem.value;gem.dead=true;addParticle(gem.x,gem.y,gem.color,4,50);while(g.xp>=g.xpNeed){g.xp-=g.xpNeed;g.level++;g.xpNeed=Math.floor(g.xpNeed*1.23+4);openUpgrades()}sound(560,.035,'sine')}}g.gems=g.gems.filter(x=>!x.dead);
  for(const c of g.chests){c.bob+=dt*3;c.glow=(c.glow||0)+dt;if(c.knowledge)continue;if(Math.hypot(p.x-c.x,p.y-c.y)<p.r+24){openChest(c);break}}g.nearKnowledgeChest=KnowledgeChestSystem.nearest(g.chests,p,58);g.chests=g.chests.filter(c=>!c.dead&&!c.used);
  for(const f of g.floaters){f.y-=30*dt;f.life-=dt}g.floaters=g.floaters.filter(f=>f.life>0);for(const a of g.particles){a.x+=a.vx*dt;a.y+=a.vy*dt;a.vx*=Math.pow(.05,dt);a.vy*=Math.pow(.05,dt);a.life-=dt}g.particles=g.particles.filter(a=>a.life>0);shake=Math.max(0,shake-dt*15);
  ElementSystem.resolveDeaths(g,damageEnemy);const dead=g.enemies.filter(e=>e.hp<=0);for(const e of dead){EnemySprites.defeat(e,g.time);g.kills++;const value=e.boss?28:e.type==='brute'||e.type==='gravedigger'||e.type==='armored'?3:1;g.gems.push({x:e.x,y:e.y,r:value>10?9:5,value:Math.min(Number.MAX_SAFE_INTEGER,Math.round(value*1.20**(g.level-1))),color:value>10?'#ffbd52':value>2?'#68e3cf':'#65c5e8',bob:0});addParticle(e.x,e.y,e.color,8,e.boss?190:80);if(e.boss){BossSystem.cancel(g,e);g.chests.push(ChestSystem.create(e.x+20,e.y,'boss',BossSystem.name(e)));g.bossWave=false;g.boss=null;say(BossSystem.name(e).toUpperCase()+' DERROTADO! BAÚ DE RECOMPENSA',2300);shake=12}else if(Math.random()<.008+g.player.luck*.025)g.chests.push(ChestSystem.create(e.x,e.y))}g.enemies=g.enemies.filter(e=>e.hp>0);g.boss=g.enemies.find(e=>e.boss)||null;
  EnemySprites.tick(g);
- if(p.hp<=0)endGame();if(g.stage>previousStage)say(`ESTÁGIO ${g.stage} — MAIS FORASTEIROS`,1800)
+ if(p.hp<=0)endGame();if(enemyLevelChanged&&!g.completed)say(`INIMIGOS NÍVEL ${g.enemyLevel}${g.enemyLevel===3?' — +1 PROJÉTIL POR ATAQUE':' — MAIS FORTES E RESISTENTES'}`,2600);else if(g.stage>previousStage)say(`ESTÁGIO ${g.stage} — MAIS FORASTEIROS`,1800)
 }
-function shootHostile(e,dx,dy,speed=220,damage=10){game.hostile.push({x:e.x,y:e.y,vx:dx*speed,vy:dy*speed,r:5,life:4,damage,color:e.boss?'#ff6254':'#f4d178'});EnemySprites.fired(e,game.time,dx,dy)}
-function hurtPlayer(d){const p=game.player;if(p.invuln>0)return;p.hp-=d*(1-p.armor);p.invuln=1.05;addParticle(p.x,p.y,'#ff775f',12,100);sound(100,.13,'sawtooth')}
+function shootHostile(e,dx,dy,speed=220,damage=10){if(game.completed||game.hostile.length>=BossSystem.limits.hostile)return;damage*=e.levelDamageMultiplier||1;game.hostile.push({x:e.x,y:e.y,vx:dx*speed,vy:dy*speed,r:5,life:4,damage,color:e.boss?'#ff6254':'#f4d178'});EnemySprites.fired(e,game.time,dx,dy)}
+function hurtPlayer(d){if(game.completed)return;const p=game.player;if(p.invuln>0||d<=0)return;if(game.difficulty==='nohit'){p.hp=0;addParticle(p.x,p.y,'#ff775f',12,100);endGame();return}p.hp-=d*(1-clamp(p.armor,0,MAX_DAMAGE_REDUCTION));p.invuln=1.05;addParticle(p.x,p.y,'#ff775f',12,100);sound(100,.13,'sawtooth')}
 // Visual links are snapshots of the actual hit chain, never extra damage events.
 function addLassoArc(from,to,index,evolved){
  const arcs=game.lassoArcs||=([]);
@@ -140,7 +172,7 @@ function addLassoArc(from,to,index,evolved){
  if(arcs.length>64)arcs.splice(0,arcs.length-64);
 }
 function showWeaponAttack(p,w,target){if(w.id===p.startWeapon){p.heroAttackAt=game.time;p.heroAttackAngle=target?Math.atan2(target.y-p.y,target.x-p.x):(p.weaponAngle??(p.facing<0?Math.PI:0))}p.attack=.18;p.muzzleFlash=['revolver','shotgun','rain'].includes(w.id) ? .07 : 0;p.heldWeapon=w.id;p.weaponPose=.72;if(target)p.weaponAngle=Math.atan2(target.y-p.y,target.x-p.x);if(w.id==='revolver'&&p.characterId==='nopal'){p.nopalShotAt=game.time;p.nopalShotAngle=p.weaponAngle||0}if(w.id==='shotgun'&&p.characterId==='rosa'){p.rosaShotAt=game.time;p.rosaShotAngle=p.weaponAngle||0}WeaponVisuals.emit(game,w.id,p.x,p.y-5,p.weaponAngle||0)}
-function fireWeapon(w){const g=game,p=g.player;w.cool=w.cd/p.attackSpeed;const enemies=g.enemies.filter(e=>e.hp>0&&dist(p,e)<w.range+100).sort((a,b)=>dist(p,a)-dist(p,b)),target=enemies[0];
+function fireWeapon(w){if(game.completed)return;const g=game,p=g.player;w.cool=w.cd/p.attackSpeed;const enemies=g.enemies.filter(e=>e.hp>0&&dist(p,e)<w.range+100).sort((a,b)=>dist(p,a)-dist(p,b)),target=enemies[0];
  if(w.id==='thorns'){showWeaponAttack(p,w,target);for(let i=0;i<w.qty;i++){const a=w.angle+i*TAU/w.qty,r=w.range+(w.evolved?18:0),x=p.x+Math.cos(a)*r,y=p.y+Math.sin(a)*r;for(const e of enemies)if(Math.hypot(e.x-x,e.y-y)<e.r+19){damageEnemy(e,w.damage*p.damage,false,'thorns');WeaponVisuals.emit(g,'hit',e.x,e.y,a,0,'thorns')}addParticle(x,y,w.color,1,10)}return}
  if(w.id==='lasso'){if(!target)return;showWeaponAttack(p,w,target);let chain=target,hit=new Set(),source={x:p.x+Math.cos(p.weaponAngle)*15,y:p.y-5+Math.sin(p.weaponAngle)*4};for(let i=0;i<w.qty&&chain;i++){addLassoArc(source,chain,i,w.evolved);source=chain;hit.add(chain);damageEnemy(chain,w.damage*p.damage,Math.random()<p.crit,'lasso');for(let j=0;j<5;j++){const a=j*TAU/5;game.particles.push({x:chain.x,y:chain.y,vx:Math.cos(a)*90,vy:Math.sin(a)*90,life:.32,max:.32,color:w.color,size:3})}chain=enemies.find(e=>e.hp>0&&!hit.has(e)&&dist(e,chain)<(w.evolved?245:165))}return}
  if(w.id==='meteor'){showWeaponAttack(p,w,target);for(let i=0;i<w.qty;i++){let t=enemies[i%Math.max(1,enemies.length)],x=t?t.x+rand(-28,28):p.x+rand(-w.range,w.range),y=t?t.y+rand(-28,28):p.y+rand(-w.range,w.range);game.hazards.push({x,y,r:76*p.area,damage:w.damage*p.damage*(w.evolved?1.45:1),t:0,delay:.65});}return}
@@ -150,8 +182,8 @@ function fireWeapon(w){const g=game,p=g.player;w.cool=w.cd/p.attackSpeed;const e
  if(!target)return;showWeaponAttack(p,w,target);const base=Math.atan2(target.y-p.y,target.x-p.x),qty=w.id==='shotgun'?w.qty:1,spread=w.id==='shotgun'?.78:.0;for(let i=0;i<qty;i++){const a=base+(qty===1?0:(i/(qty-1)-.5)*spread);game.shots.push({visualWeapon:w.id,visualBorn:g.time,x:p.x+Math.cos(a)*13,y:p.y+Math.sin(a)*13,vx:Math.cos(a)*w.speed,vy:Math.sin(a)*w.speed,r:w.id==='shotgun'?4:5,damage:w.damage*p.damage,life:w.range/w.speed+1,pierce:p.pierce,crit:Math.random()<p.crit,color:w.color})}sound(w.id==='shotgun'?135:320,w.id==='shotgun'?.13:.055)}
 function explode(s){s.x=s.tx;s.y=s.ty;const radius=110*game.player.area*(game.weapons.dynamite.evolved?1.35:1);WeaponVisuals.emit(game,'blast',s.x,s.y,0,radius);for(const e of game.enemies)if(Math.hypot(e.x-s.x,e.y-s.y)<radius+e.r){damageEnemy(e,s.damage,Math.random()<game.player.crit,'dynamite');const d=Math.hypot(e.x-s.x,e.y-s.y)||1;e.knock=.22;e.kx=(e.x-s.x)/d*140;e.ky=(e.y-s.y)/d*140}addParticle(s.x,s.y,'#ff924b',28,190);addParticle(s.x,s.y,'#ffdc72',15,130);shake=Math.max(shake,6);sound(75,.3,'sawtooth')}
 function damageEnemy(e,d,crit,source){
- if(e.hp<=0)return;
- d*=ElementSystem.multiplier(game,e);if(crit)d*=game.player.critMult;
+ if(game.completed||e.hp<=0)return;
+ d*=ElementSystem.multiplier(game,e)*(1-(e.resistance||0));if(crit)d*=game.player.critMult;
  e.hp-=d;e.hit=.1;
  if(source==='element'){
   // Group rapid periodic/reaction numbers; no extra combat RNG for UI jitter.
@@ -165,10 +197,32 @@ function damageEnemy(e,d,crit,source){
  if(e.hp<=0)addParticle(e.x,e.y,e.color,6,90);
  if(source&&source!=='element')ElementSystem.onHit(game,e,source,damageEnemy);
 }
-function openUpgrades(){if(screen==='upgrade'){game.pendingUpgrades++;return}if(screen!=='playing')return;const pool=[...upgradePool.filter(u=>!u.weapon||game.weapons[u.weapon].level>0),...ElementSystem.cards(game)];for(const [id,w] of Object.entries(game.weapons)){if(w.level<8&&(id!=='solar'||w.level>0))pool.push({name:w.level?`Melhorar: ${w.name}`:`Nova arma: ${w.name}`,desc:w.level?`Nível ${w.level} → ${w.level+1}: +18% dano e recarga mais rápida.`:`Adiciona ${w.name} à sua coleção. ${w.desc}`,rarity:w.level?'Incomum':'Rara',icon:w.icon,weapon:id,apply:g=>{const a=g.weapons[id];if(!a.level){a.level=1;a.cool=.2}else a.level++;a.damage*=1.18;a.cd*=.94}})}const selected=[];for(let i=0;i<3&&pool.length;i++){let weights=pool.map(u=>{let base={Comum:55,Incomum:27,Rara:13,Épica:4,Lendária:1}[u.rarity]||1;if(u.elementalId)base=u.weight;return base*(1+game.player.luck*({Comum:-.25,Incomum:0,Rara:1.1,Épica:2,Lendária:2.7}[u.rarity]||0))}),sum=weights.reduce((a,b)=>a+b,0),n=Math.random()*sum,j=weights.findIndex(w=>(n-=w)<0);selected.push(pool.splice(Math.max(0,j),1)[0])}game.choices=selected;screen='upgrade';sound(700,.2,'sine')}
-function pickUpgrade(i){if(screen!=='upgrade'||!game.choices[i])return;if(game.choices[i].elementalId&&!ElementSystem.canSelect(game,game.choices[i].elementalId))return;game.choices[i].apply(game);say(game.choices[i].name.toUpperCase(),1500);game.choices=[];screen='playing';sound(500,.1,'sine');if(game.pendingUpgrades>0){game.pendingUpgrades--;openUpgrades()}}
+// All weapon rewards share a cap and additive damage growth, including chests.
+function improveWeapon(w,steps=1){
+ const next=Math.min(w.max,w.level+steps),gained=Math.max(0,next-Math.max(1,w.level));
+ if(next<=w.level)return false;
+ w.level=next;w.damage+=weaponDefs[w.id].damage*WEAPON_DAMAGE_STEP*gained;
+ w.cd*=.97**gained;if(next===1)w.cool=.2;return true;
+}
+function canTakeUpgrade(g,u){
+ if(g.completed)return false;
+ if(g.difficulty==='nohit'&&(u.survivalUpgrade||u.armorUpgrade))return false;
+ if(u.armorUpgrade&&g.player.armor>=MAX_DAMAGE_REDUCTION)return false;
+ if((u.damageUpgrade||u.weapon)&&(g.upgradeCounts[u.name]||0)>=MAX_DAMAGE_UPGRADES)return false;
+ return !u.weapon||g.weapons[u.weapon].level>0;
+}
+function takeUpgrade(g,u){
+ if(g.completed)return false;
+ if(u.weaponLevel)return improveWeapon(g.weapons[u.weapon]);
+ if(!canTakeUpgrade(g,u))return false;
+ u.apply(g);if(u.damageUpgrade||u.weapon)g.upgradeCounts[u.name]=(g.upgradeCounts[u.name]||0)+1;
+ return true;
+}
+function openUpgrades(){if(screen==='upgrade'){game.pendingUpgrades++;return}if(screen!=='playing')return;const pool=[...upgradePool.filter(u=>canTakeUpgrade(game,u)),...ElementSystem.cards(game)];for(const [id,w] of Object.entries(game.weapons)){if(w.level<w.max&&(id!=='solar'||w.level>0))pool.push({name:w.level?`Melhorar: ${w.name}`:`Nova arma: ${w.name}`,desc:w.level?`Nível ${w.level} → ${w.level+1}: +10% do dano base e recarga 3% mais rápida (máx. 10).`:`Adiciona ${w.name} à sua coleção. ${w.desc}`,rarity:w.level?'Incomum':'Rara',icon:w.icon,weaponLevel:true,weapon:id,apply:g=>improveWeapon(g.weapons[id])})}const selected=[];for(let i=0;i<3&&pool.length;i++){let weights=pool.map(u=>{let base={Comum:55,Incomum:27,Rara:13,Épica:4,Lendária:1}[u.rarity]||1;if(u.elementalId)base=u.weight;return base*(1+game.player.luck*({Comum:-.25,Incomum:0,Rara:1.1,Épica:2,Lendária:2.7}[u.rarity]||0))}),sum=weights.reduce((a,b)=>a+b,0),n=Math.random()*sum,j=weights.findIndex(w=>(n-=w)<0);selected.push(pool.splice(Math.max(0,j),1)[0])}game.choices=selected;screen='upgrade';sound(700,.2,'sine')}
+function pickUpgrade(i){if(screen!=='upgrade'||!game.choices[i])return;if(game.choices[i].elementalId&&!ElementSystem.canSelect(game,game.choices[i].elementalId))return;if(!takeUpgrade(game,game.choices[i]))return;say(game.choices[i].name.toUpperCase(),1500);game.choices=[];screen='playing';sound(500,.1,'sine');if(game.pendingUpgrades>0){game.pendingUpgrades--;openUpgrades()}}
 function interactWithKnowledgeChest(){if(screen!=='playing'||!game)return;const chest=KnowledgeChestSystem.nearest(game.chests,game.player,58);if(!chest)return;game.nearKnowledgeChest=chest;const quiz=KnowledgeChestSystem.open(chest,game.stage,game.level,game.knowledgeUsed);if(!quiz)return;game.knowledgeQuiz={chest,quiz};screen='knowledge';interactButton.hidden=true;sound(520,.14,'sine')}
 function grantChestXP(amount,defer=false){
+ if(game.completed)return 0;
  const g=game,xp=Number.isFinite(amount)?Math.max(0,Math.min(Number.MAX_SAFE_INTEGER,Math.floor(amount))):0;
  g.xp=Math.min(Number.MAX_SAFE_INTEGER,g.xp+xp);let levels=0;
  while(g.xp>=g.xpNeed&&g.xpNeed>0){g.xp-=g.xpNeed;g.level++;g.xpNeed=Math.floor(g.xpNeed*1.23+4);levels++}
@@ -177,13 +231,13 @@ function grantChestXP(amount,defer=false){
  return levels;
 }
 function awardKnowledgeReward(quiz){
- if(quiz.rewardApplied||!quiz.correct)return;
+ if(game.completed||quiz.rewardApplied||!quiz.correct)return;
  const g=game;quiz.rewardApplied=true;quiz.rewardLevel=g.level;
  quiz.rewardXP=ChestSystem.reward(g.level,'knowledge',quiz.question.reward.xp);
  grantChestXP(quiz.rewardXP,true);let message=`+${ChestSystem.format(quiz.rewardXP)} XP · nível ${quiz.rewardLevel}`;
  if(Math.random()<quiz.question.reward.weaponChance){
   const options=Object.values(g.weapons).filter(w=>w.level>0&&w.level<w.max);
-  if(options.length){const weapon=choose(options);weapon.level++;weapon.damage*=1.12;weapon.cd*=.96;message+=` • ${weapon.name} aprimorada`}
+  if(options.length){const weapon=choose(options);improveWeapon(weapon);message+=` • ${weapon.name} aprimorada`}
  }
  quiz.rewardText=message;
  if(g.knowledgeQuiz?.quiz===quiz)ChestSystem.burst(g,g.knowledgeQuiz.chest,quiz.rewardXP);
@@ -195,25 +249,35 @@ function closeKnowledgePanel(){if(screen!=='knowledge'||!game?.knowledgeQuiz)ret
 function handleKnowledgePointer(e){const p=pos(e),state=game?.knowledgeQuiz;if(!state)return;if(state.quiz.answered){const r=knowledgeContinueRect();if(p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h)closeKnowledgePanel();return}for(const [i,r] of knowledgeAnswerRects().entries())if(p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h){answerKnowledgeQuestion(i);break}}
 function openChest(chest){
  const g=game,c=chest||ChestSystem.create(g.player.x,g.player.y);
- if(c.rewardClaimed||c.used||c.knowledge)return false;
+ if(g.completed||c.rewardClaimed||c.used||c.knowledge)return false;
  c.rewardClaimed=true;c.dead=true;c.rewardLevel=g.level;c.rewardXP=ChestSystem.reward(g.level,ChestSystem.type(c));
- const candidates=Object.values(g.weapons).filter(w=>w.level>=3&&w.level<8&&!w.evolved),w=candidates.length?choose(candidates):null;
+ const candidates=Object.values(g.weapons).filter(w=>w.level>=3&&w.level<w.max&&!w.evolved),w=candidates.length?choose(candidates):null;
  let message;
  if(w){
-  w.evolved=true;w.level=Math.min(8,w.level+2);
+  w.evolved=true;improveWeapon(w,2);
   const names={revolver:'PISTOLEIRO FANTASMA',shotgun:'TEMPESTADE DE CHUMBO',dynamite:'DEMOLIÇÃO DO OESTE',thorns:'FURACÃO DE ESPINHOS',lasso:'CORRENTE DA TEMPESTADE',rain:'SALVA DO APOCALIPSE',meteor:'CHUVA DE OURO',solar:'SOL DO JUÍZO FINAL'};
-  message=`ARMA EVOLUÍDA: ${names[w.id]}`;g.player.damage*=1.12;sound(800,.5,'sine');
+  message=`ARMA EVOLUÍDA: ${names[w.id]}`;sound(800,.5,'sine');
   for(let i=0;i<35;i++)addParticle(g.player.x,g.player.y,choose(['#ffe56d','#f07e49','#72e8dc']),1,160);
  }else{
-  g.player.hp=Math.min(g.player.maxHp,g.player.hp+g.player.maxHp*.35);
-  const options=Object.values(g.weapons).filter(x=>x.level<8),weapon=options.length?choose(options):null;
-  if(weapon)weapon.level++;
-  message=weapon?'BAÚ: TÔNICO E MELHORIA DE ARMA':'BAÚ: TÔNICO';sound(650,.25,'sine');
+  if(g.difficulty!=='nohit')g.player.hp=Math.min(g.player.maxHp,g.player.hp+g.player.maxHp*.35);
+  const options=Object.values(g.weapons).filter(x=>x.level<x.max),weapon=options.length?choose(options):null;
+  if(weapon)improveWeapon(weapon);
+  message=g.difficulty==='nohit'?(weapon?'BAÚ: MELHORIA DE ARMA':'BAÚ: EXPERIÊNCIA'):(weapon?'BAÚ: TÔNICO E MELHORIA DE ARMA':'BAÚ: TÔNICO');sound(650,.25,'sine');
  }
  ChestSystem.burst(g,c,c.rewardXP);grantChestXP(c.rewardXP);
  say(`${message} · +${ChestSystem.format(c.rewardXP)} XP`,3000);return true;
 }
-function endGame(){if(screen==='dead')return;screen='dead';if(game.time>save.best)save.best=game.time;persist();sound(72,.8,'sawtooth')}
+function endGame(victory=false){
+ if(game.completed)return;
+ game.completed=true;game.victory=victory;screen='dead';
+ // Bosses are recurring encounters, never an extra requirement past the limit.
+ for(const e of game.enemies)if(e.boss)BossSystem.cancel(game,e);
+ game.boss=null;game.bossWave=false;game.bossHazards=[];
+ game.shots=[];game.hostile=[];game.hazards=[];
+ game.pendingUpgrades=0;game.choices=[];game.knowledgeQuiz=null;game.nearKnowledgeChest=null;
+ keys.clear();stick.x=stick.y=0;knob.style.transform='translate(0,0)';
+ if(game.time>save.best)save.best=game.time;persist();sound(victory?660:72,.8,victory?'sine':'sawtooth');
+}
 const sx=x=>Math.round(x-camera.x+W/2),sy=y=>Math.round(y-camera.y+H/2);
 function syncKnowledgeButton(){interactButton.hidden=!(screen==='playing'&&game?.nearKnowledgeChest);touch.style.display=screen==='playing'?'':'none'}
 function draw(){syncKnowledgeButton();ctx.clearRect(0,0,W,H);if(screen==='title'){drawTitle();return}if(screen==='characters'){drawCharacterSelect();return}if(!game){drawTitle();return}ctx.save();if(shake>0)ctx.translate(rand(-shake,shake),rand(-shake,shake));drawWorld();ctx.restore();drawHUD();ElementVisuals.hud(ctx,game,W);if(screen==='upgrade')drawUpgrade();if(screen==='pause')drawPause();if(screen==='knowledge')drawKnowledgePanel();if(screen==='dead')drawDead();if(performance.now()<toastUntil){ctx.save();ctx.globalAlpha=clamp((toastUntil-performance.now())/240,.45,1);toast.style.display='block';ctx.restore()}else toast.style.display='none'}
@@ -229,8 +293,8 @@ function drawCactusProp(x,y,s=1){ctx.save();ctx.translate(Math.round(x),Math.rou
 function drawPlayer(p){const x=Math.round(sx(p.x)),y=Math.round(sy(p.y)),walk=Math.round(Math.sin(p.walk)*2);ctx.save();ctx.translate(x,y);if(p.facing<0)ctx.scale(-1,1);if(p.invuln>0&&Math.floor(p.invuln*14)%2)ctx.globalAlpha=.45;ctx.fillStyle='#49352d';ctx.fillRect(-16,11,32,5);ctx.fillRect(-12,15,24,2);ctx.fillStyle='#76513c';ctx.fillRect(-12,8+walk,9,7);ctx.fillRect(3,8-walk,9,7);ctx.fillStyle='#283e38';ctx.fillRect(-11,-16,22,29);ctx.fillStyle='#3e704a';ctx.fillRect(-9,-15,18,27);ctx.fillStyle='#62945a';ctx.fillRect(-7,-14,12,24);ctx.fillRect(-17,-10+walk,9,6);ctx.fillRect(-17,-10+walk,5,13);ctx.fillRect(8,-7-walk,9,6);ctx.fillRect(12,-10-walk,5,13);ctx.fillStyle='#89ad69';ctx.fillRect(-5,-12,2,20);ctx.fillRect(-2,-13,3,4);ctx.fillRect(3,-6,2,3);ctx.fillRect(-5,3,2,4);ctx.fillStyle='#d95b4d';ctx.fillRect(-9,-1,18,5);ctx.fillRect(7,1,5,3);ctx.fillStyle='#a83e40';ctx.fillRect(-8,3,15,2);ctx.fillStyle='#f4d9a0';ctx.fillRect(2,-12,2,3);ctx.fillStyle='#292929';ctx.fillRect(3,-12,1,1);for(let i=0;i<6;i++){const sx0=-6+(i%3)*6,sy0=-8+Math.floor(i/3)*10;ctx.fillStyle='#dce5b0';ctx.fillRect(sx0-1,sy0-3,2,4)}ctx.fillStyle='#493126';ctx.fillRect(-11,-16,22,3);ctx.fillRect(-8,-19,17,5);ctx.fillRect(-6,-23,13,5);ctx.fillRect(-3,-25,8,3);ctx.fillStyle='#bd7d3e';ctx.fillRect(-7,-22,14,2);ctx.fillStyle='#d5a04d';ctx.fillRect(-14,-16,28,3);ctx.fillRect(8,-20,3,3);ctx.fillStyle='#f2d184';ctx.fillRect(-2,-21,7,1);ctx.fillStyle='#efe0ac';ctx.fillRect(-10,-15,4,1);ctx.fillRect(7,-15,4,1);ctx.fillStyle='#604332';ctx.fillRect(-15,5,5,5);ctx.fillRect(10,5,5,5);ctx.fillStyle='#d8b078';ctx.fillRect(-10,12,8,2);ctx.fillRect(4,12,8,2);ctx.restore()}
 function drawEnemy(e){EnemySprites.draw(ctx,e,sx(e.x),sy(e.y),game.time)}
 function drawChest(c){const x=sx(c.x),y=sy(c.y)+Math.sin(c.bob)*3;ctx.fillStyle='#603a24';ctx.fillRect(x-12,y-7,24,17);ctx.fillStyle='#c7913f';ctx.fillRect(x-12,y-8,24,5);ctx.fillRect(x-2,y-8,4,18);ctx.fillStyle='#ffe384';ctx.fillRect(x-2,y-2,4,5)}
-function drawHUD(){const g=game,p=g.player,pad=18;ctx.save();ctx.fillStyle='#2a1d1bdc';ctx.fillRect(12,12,280,76);ctx.strokeStyle='#e5bd74';ctx.lineWidth=2;ctx.strokeRect(12,12,280,76);ctx.fillStyle='#140f10';ctx.fillRect(24,25,250,13);ctx.fillStyle='#a84038';ctx.fillRect(24,25,250*clamp(p.hp/p.maxHp,0,1),13);ctx.strokeStyle='#f2d99b';ctx.strokeRect(24,25,250,13);ctx.fillStyle='#21191a';ctx.fillRect(24,49,250,10);ctx.fillStyle='#55c9d1';ctx.fillRect(24,49,250*clamp(g.xp/g.xpNeed,0,1),10);ctx.strokeStyle='#eee0b1';ctx.strokeRect(24,49,250,10);ctx.fillStyle='#fff1d0';ctx.font='bold 13px Georgia';ctx.textAlign='left';ctx.fillText(`NÍVEL ${g.level}   ♥ ${Math.ceil(p.hp)}/${Math.ceil(p.maxHp)}`,24,80);
- ctx.textAlign='center';ctx.font='bold 18px Georgia';ctx.fillStyle='#fff1cb';ctx.fillText(fmtTime(g.time),W/2,29);ctx.font='12px Georgia';ctx.fillText(`ESTÁGIO ${g.stage}  •  ${g.kills} FORASTEIROS`,W/2,47);ctx.textAlign='right';ctx.font='13px Georgia';ctx.fillText('ESC Ⅱ',W-18,27);if(W>=700){ctx.fillStyle=CharacterRoster.get(p.characterId).color;ctx.fillText(CharacterRoster.get(p.characterId).name,W-18,47)}
+function drawHUD(){const g=game,p=g.player,pad=18;ctx.save();ctx.fillStyle='#2a1d1bdc';ctx.fillRect(12,12,280,76);ctx.strokeStyle='#e5bd74';ctx.lineWidth=2;ctx.strokeRect(12,12,280,76);ctx.fillStyle='#140f10';ctx.fillRect(24,25,250,13);ctx.fillStyle='#a84038';ctx.fillRect(24,25,250*clamp(p.hp/p.maxHp,0,1),13);ctx.strokeStyle='#f2d99b';ctx.strokeRect(24,25,250,13);ctx.fillStyle='#21191a';ctx.fillRect(24,49,250,10);ctx.fillStyle='#55c9d1';ctx.fillRect(24,49,250*clamp(g.xp/g.xpNeed,0,1),10);ctx.strokeStyle='#eee0b1';ctx.strokeRect(24,49,250,10);ctx.fillStyle='#fff1d0';ctx.font='bold 13px Georgia';ctx.textAlign='left';ctx.fillText(g.difficulty==='nohit'?`NÍVEL ${g.level}   NO HIT · 1 ACERTO FATAL`:`NÍVEL ${g.level}   ♥ ${Math.ceil(p.hp)}/${Math.ceil(p.maxHp)}`,24,80);
+ ctx.textAlign='center';ctx.font='bold 18px Georgia';ctx.fillStyle='#fff1cb';ctx.fillText(`${fmtTime(g.time)} / ${fmtTime(MAX_GAME_SECONDS)}`,W/2,29);ctx.font='12px Georgia';ctx.fillText(`ESTÁGIO ${g.stage}  •  ${g.kills} FORASTEIROS`,W/2,47);ctx.font='12px Georgia';ctx.fillText(`INIMIGOS NV. ${g.enemyLevel}`,W/2,64);ctx.textAlign='right';ctx.font='13px Georgia';ctx.fillText('ESC Ⅱ',W-18,27);if(W>=700){ctx.fillStyle=CharacterRoster.get(p.characterId).color;ctx.fillText(CharacterRoster.get(p.characterId).name,W-18,47)}
  let by=105;for(const w of Object.values(g.weapons).filter(x=>x.level)){ctx.fillStyle='#241a19c9';ctx.fillRect(14,by,198,24);ctx.fillStyle=w.color;ctx.font='bold 13px Georgia';ctx.textAlign='left';ctx.fillText(`${w.icon} ${w.name}${w.evolved?' ✦':''}`,22,by+16);ctx.fillStyle='#fff1ce';ctx.textAlign='right';ctx.fillText(`${w.level}`,204,by+16);by+=28}if(g.boss){ctx.fillStyle='#2d1c20';ctx.fillRect(W*.27,H-28,W*.46,13);ctx.fillStyle='#c8423b';ctx.fillRect(W*.27,H-28,W*.46*clamp(g.boss.hp/g.boss.maxHp,0,1),13);ctx.strokeStyle='#f0d18d';ctx.strokeRect(W*.27,H-28,W*.46,13);ctx.fillStyle='#fff0cf';ctx.font='12px Georgia';ctx.textAlign='center';ctx.fillText(BossSystem.name(g.boss).toUpperCase()+(g.boss.hp<g.boss.maxHp*.5?' · ENFURECIDO':''),W/2,H-34)}ctx.restore()}
 function drawTitle(){ctx.fillStyle='#c88149';ctx.fillRect(0,0,W,H);for(let i=0;i<8;i++){const y=H*.46+i*i*3;ctx.fillStyle=['#a65e43','#9a5542','#80453b'][i%3];ctx.beginPath();ctx.moveTo(0,y+45);ctx.lineTo(W*.12,y-25-i*3);ctx.lineTo(W*.25,y+15);ctx.lineTo(W*.43,y-55-i*3);ctx.lineTo(W*.62,y+20);ctx.lineTo(W*.82,y-42-i*2);ctx.lineTo(W,y+5);ctx.lineTo(W,y+120);ctx.lineTo(0,y+120);ctx.fill()}ctx.fillStyle='#e9b36b';ctx.fillRect(0,H*.69,W,H*.31);for(let i=0;i<7;i++)drawCactusProp((i*197+55)%W,H*.81+(i%3)*20,.9+(i%2)*.3);ctx.fillStyle='#39251f';ctx.textAlign='center';ctx.font=`bold ${Math.min(54,W*.075)}px Georgia`;ctx.fillText('CACTUS SURVIVORS',W/2,H*.24);ctx.fillStyle='#f0cc84';ctx.font=`bold ${Math.min(22,W*.035)}px Georgia`;ctx.fillText('O ÚLTIMO CACTO DO OESTE',W/2,H*.31);drawCharacterPreview(CharacterRoster.get(selectedCharacterId),W/2,H*.44,1);const labels=['JOGAR',`OPÇÕES — SOM ${save.sound?'LIGADO':'DESLIGADO'}`,'COMO JOGAR'];ctx.font='bold 19px Georgia';for(let i=0;i<3;i++){const y=H*(.53+i*.09);ctx.fillStyle='#613522';ctx.fillRect(W/2-143,y-25,286,40);ctx.strokeStyle='#edc276';ctx.lineWidth=2;ctx.strokeRect(W/2-143,y-25,286,40);ctx.fillStyle='#fff0cf';ctx.fillText(labels[i],W/2,y+2)}ctx.font='14px Georgia';ctx.fillStyle='#432c24';ctx.fillText(`RECORDE: ${fmtTime(save.best||0)}  •  WASD / SETAS PARA MOVER  •  ESC PARA PAUSAR`,W/2,H*.91)}
 function card(x,y,w,h,c,index){const hover=pointer.x>=x&&pointer.x<=x+w&&pointer.y>=y&&pointer.y<=y+h;ElementVisuals.card(ctx,{x,y,w,h},c,hover,index)}
@@ -250,10 +314,11 @@ function drawKnowledgePanel(){const state=game?.knowledgeQuiz,l=knowledgeLayout(
 function drawOverlay(title,subtitle){ctx.fillStyle='#160f0fbd';ctx.fillRect(0,0,W,H);ctx.textAlign='center';ctx.fillStyle='#f2d391';ctx.font=`bold ${Math.min(44,W*.07)}px Georgia`;ctx.fillText(title,W/2,H*.3);ctx.fillStyle='#fff1d4';ctx.font='16px Georgia';ctx.fillText(subtitle,W/2,H*.37)}
 function upgradeLayout(){const gap=W<600?8:16,cw=Math.min(270,(W-24-gap*2)/3),h=Math.min(380,H*.68);return {gap,cw,h,x:(W-(3*cw+2*gap))/2,y:H*.25}}
 function drawUpgrade(){ctx.fillStyle='#11151be8';ctx.fillRect(0,0,W,H);ctx.textAlign='center';ctx.fillStyle='#e8ce94';ctx.font=`bold ${Math.min(32,W*.055)}px Georgia`;ctx.fillText('ESCOLHA SEU DESTINO',W/2,H*.12);ctx.fillStyle='#bcbaa7';ctx.font=`${Math.min(15,W*.032)}px Georgia`;ctx.fillText('Escolha uma carta · a partida está pausada',W/2,H*.18);const l=upgradeLayout();for(let i=0;i<3;i++){const c=game.choices[i];if(c)card(l.x+i*(l.cw+l.gap),l.y,l.cw,l.h,c,i)}}
-function drawPause(){drawOverlay('PAUSADO','ESC para continuar');const ls=['CONTINUAR','REINICIAR PARTIDA','VOLTAR AO MENU'];ctx.textAlign='center';for(let i=0;i<3;i++){const y=H*.45+i*55;ctx.fillStyle='#5a3827';ctx.fillRect(W/2-140,y-24,280,40);ctx.strokeStyle='#d5ad68';ctx.strokeRect(W/2-140,y-24,280,40);ctx.fillStyle='#fff1d0';ctx.font='bold 17px Georgia';ctx.fillText(ls[i],W/2,y+2)}}
-function drawDead(){drawOverlay('FIM DE JOGO','O deserto ficou com a última palavra');ctx.fillStyle='#fff0ce';ctx.textAlign='center';ctx.font='18px Georgia';ctx.fillText(`Sobreviveu ${fmtTime(game.time)}   •   ${game.kills} derrotados   •   nível ${game.level}`,W/2,H*.45);ctx.fillText(`Recorde: ${fmtTime(save.best)}   •   Armas: ${Object.values(game.weapons).filter(w=>w.level).length}`,W/2,H*.5);const ls=['TENTAR NOVAMENTE','ESCOLHER PERSONAGEM'];for(let i=0;i<2;i++){const y=H*.62+i*53;ctx.fillStyle='#5a3827';ctx.fillRect(W/2-145,y-23,290,39);ctx.strokeStyle='#d5ad68';ctx.strokeRect(W/2-145,y-23,290,39);ctx.fillStyle='#fff1d0';ctx.font='bold 17px Georgia';ctx.fillText(ls[i],W/2,y+2)}}
+function drawPause(){drawOverlay('PAUSADO',game.difficulty==='nohit'?'NO HIT · ESC para continuar':'ESC para continuar');const ls=['CONTINUAR','REINICIAR PARTIDA','VOLTAR AO MENU'];ctx.textAlign='center';for(let i=0;i<3;i++){const y=H*.45+i*55;ctx.fillStyle='#5a3827';ctx.fillRect(W/2-140,y-24,280,40);ctx.strokeStyle='#d5ad68';ctx.strokeRect(W/2-140,y-24,280,40);ctx.fillStyle='#fff1d0';ctx.font='bold 17px Georgia';ctx.fillText(ls[i],W/2,y+2)}}
+function drawDead(){drawOverlay(game.victory?(game.difficulty==='nohit'?'VITÓRIA NO HIT!':'VITÓRIA!'):(game.difficulty==='nohit'?'FIM DE JOGO · NO HIT':'FIM DE JOGO'),game.victory?`Você sobreviveu ${MAX_GAME_SECONDS/60} minutos no deserto!`:'O deserto ficou com a última palavra');ctx.fillStyle='#fff0ce';ctx.textAlign='center';ctx.font='18px Georgia';ctx.fillText(`Sobreviveu ${fmtTime(game.time)}   •   ${game.kills} derrotados   •   nível ${game.level}`,W/2,H*.45);ctx.fillText(`Recorde: ${fmtTime(save.best)}   •   Armas: ${Object.values(game.weapons).filter(w=>w.level).length}`,W/2,H*.5);const ls=['TENTAR NOVAMENTE','ESCOLHER PERSONAGEM'];for(let i=0;i<2;i++){const y=H*.62+i*53;ctx.fillStyle='#5a3827';ctx.fillRect(W/2-145,y-23,290,39);ctx.strokeStyle='#d5ad68';ctx.strokeRect(W/2-145,y-23,290,39);ctx.fillStyle='#fff1d0';ctx.font='bold 17px Georgia';ctx.fillText(ls[i],W/2,y+2)}}
 function pixelBlock(color,x,y,w,h){ctx.fillStyle=color;ctx.fillRect(Math.round(x),Math.round(y),Math.max(1,Math.round(w)),Math.max(1,Math.round(h)))}
 function drawHeldWeapon(p){const id=p.heldWeapon||p.startWeapon||'revolver',hero=fullHeroSprite(p),t=p.visualTime??(game?.player===p?game.time:performance.now()/1000);
+ if(typeof Image==='function'&&!hero)return;
  if(hero&&(hero.pose(p,t).shooting||id===hero.embeddedWeapon))return;
  if(typeof WeaponSprites!=='undefined'&&WeaponSprites.held(ctx,p,Math.round(sx(p.x)),Math.round(sy(p.y)),p.visualTime??(game?.player===p?game.time:performance.now()/1000)))return;
  const face=p.facing||1,worldAngle=p.weaponAngle??(face<0?Math.PI:0),localAngle=Math.atan2(Math.sin(worldAngle),Math.cos(worldAngle)*face);

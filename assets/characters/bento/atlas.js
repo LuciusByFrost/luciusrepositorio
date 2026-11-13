@@ -22,22 +22,24 @@ const BentoAtlas = {
                    ],
     "images":  {
                    "walk":  {
-                                "file":  "walk_normalized.png",
+                                "file":  "walk_normalized.03e876f08190.png",
                                 "size":  [
                                              768,
                                              1024
-                                         ]
+                                         ],
+                                "sha256":  "03e876f08190ba136f64ca61afacd26c69716a9112f60d5a882cc1ce52265798"
                             },
                    "attack":  {
-                                  "file":  "attack_normalized.png",
+                                  "file":  "attack_normalized.ee7eeb309c31.png",
                                   "size":  [
                                                512,
                                                1024
-                                           ]
+                                           ],
+                                  "sha256":  "ee7eeb309c313ce5b55019231b04d34309abe9eeff86470760ccdbf121b8885b"
                               }
                },
     "walk":  {
-                 "fps":  10,
+                 "source":  "assets/characters/bento/bento_walk.png",
                  "idleColumns":  [
                                      0,
                                      0,
@@ -48,8 +50,6 @@ const BentoAtlas = {
                                      0,
                                      0
                                  ],
-                 "source":  "assets/characters/bento/bento_walk.png",
-                 "sourceSHA256":  "7C39F6990B62A71D61A53C961BE811661A2141441DC80A010C1DE50C6C444580",
                  "rowMap":  [
                                 0,
                                 1,
@@ -61,6 +61,7 @@ const BentoAtlas = {
                                 7
                             ],
                  "columns":  6,
+                 "fps":  10,
                  "referenceBodyHeight":  145,
                  "frames":  [
                                 {
@@ -724,7 +725,7 @@ const BentoAtlas = {
                                     "column":  1
                                 },
                                 {
-                                    "scale":  0.4195804195804196,
+                                    "scale":  0.41958041958041958,
                                     "y":  384,
                                     "drawSize":  [
                                                      48,
@@ -757,7 +758,7 @@ const BentoAtlas = {
                                     "column":  2
                                 },
                                 {
-                                    "scale":  0.4225352112676056,
+                                    "scale":  0.42253521126760563,
                                     "y":  384,
                                     "drawSize":  [
                                                      48,
@@ -955,7 +956,7 @@ const BentoAtlas = {
                                     "column":  2
                                 },
                                 {
-                                    "scale":  0.4411764705882353,
+                                    "scale":  0.44117647058823528,
                                     "y":  512,
                                     "drawSize":  [
                                                      51,
@@ -1054,7 +1055,7 @@ const BentoAtlas = {
                                     "column":  5
                                 },
                                 {
-                                    "scale":  0.4444444444444444,
+                                    "scale":  0.44444444444444442,
                                     "y":  640,
                                     "drawSize":  [
                                                      51,
@@ -1087,7 +1088,7 @@ const BentoAtlas = {
                                     "column":  0
                                 },
                                 {
-                                    "scale":  0.4411764705882353,
+                                    "scale":  0.44117647058823528,
                                     "y":  640,
                                     "drawSize":  [
                                                      49,
@@ -1153,7 +1154,7 @@ const BentoAtlas = {
                                     "column":  2
                                 },
                                 {
-                                    "scale":  0.4411764705882353,
+                                    "scale":  0.44117647058823528,
                                     "y":  640,
                                     "drawSize":  [
                                                      50,
@@ -1252,7 +1253,7 @@ const BentoAtlas = {
                                     "column":  5
                                 },
                                 {
-                                    "scale":  0.4225352112676056,
+                                    "scale":  0.42253521126760563,
                                     "y":  768,
                                     "drawSize":  [
                                                      57,
@@ -1285,7 +1286,7 @@ const BentoAtlas = {
                                     "column":  0
                                 },
                                 {
-                                    "scale":  0.4225352112676056,
+                                    "scale":  0.42253521126760563,
                                     "y":  768,
                                     "drawSize":  [
                                                      53,
@@ -1318,7 +1319,7 @@ const BentoAtlas = {
                                     "column":  1
                                 },
                                 {
-                                    "scale":  0.4225352112676056,
+                                    "scale":  0.42253521126760563,
                                     "y":  768,
                                     "drawSize":  [
                                                      55,
@@ -1351,7 +1352,7 @@ const BentoAtlas = {
                                     "column":  2
                                 },
                                 {
-                                    "scale":  0.4225352112676056,
+                                    "scale":  0.42253521126760563,
                                     "y":  768,
                                     "drawSize":  [
                                                      58,
@@ -1384,7 +1385,7 @@ const BentoAtlas = {
                                     "column":  3
                                 },
                                 {
-                                    "scale":  0.4195804195804196,
+                                    "scale":  0.41958041958041958,
                                     "y":  768,
                                     "drawSize":  [
                                                      55,
@@ -1582,7 +1583,7 @@ const BentoAtlas = {
                                     "column":  3
                                 },
                                 {
-                                    "scale":  0.3973509933774834,
+                                    "scale":  0.39735099337748342,
                                     "y":  896,
                                     "drawSize":  [
                                                      44,
@@ -1647,10 +1648,15 @@ const BentoAtlas = {
                                                      ],
                                     "column":  5
                                 }
-                            ]
+                            ],
+                 "sourceSHA256":  "7C39F6990B62A71D61A53C961BE811661A2141441DC80A010C1DE50C6C444580",
+                 "sourceSize":  [
+                                    1269,
+                                    1240
+                                ]
              },
     "attack":  {
-                   "fps":  12.5,
+                   "source":  "assets/characters/bento/bento_attack.png",
                    "idleColumns":  [
                                        0,
                                        0,
@@ -1661,8 +1667,6 @@ const BentoAtlas = {
                                        0,
                                        0
                                    ],
-                   "source":  "assets/characters/bento/bento_attack.png",
-                   "sourceSHA256":  "6D9B8FEF05AECE203C3C0F627DE588D1B1AD9EB2A88B50B76B650595CABE579D",
                    "rowMap":  [
                                   0,
                                   1,
@@ -1674,6 +1678,7 @@ const BentoAtlas = {
                                   7
                               ],
                    "columns":  4,
+                   "fps":  12.5,
                    "referenceBodyHeight":  151,
                    "frames":  [
                                   {
@@ -2732,6 +2737,11 @@ const BentoAtlas = {
                                                        ],
                                       "column":  3
                                   }
-                              ]
+                              ],
+                   "sourceSHA256":  "6D9B8FEF05AECE203C3C0F627DE588D1B1AD9EB2A88B50B76B650595CABE579D",
+                   "sourceSize":  [
+                                      887,
+                                      1774
+                                  ]
                }
 };

@@ -5,6 +5,45 @@ camadas e aparências enfurecidas. Veja [arte dos oponentes, avisos e previews](
 
 Jogo de sobrevivência 2D feito com HTML, CSS e JavaScript puro. Não usa bibliotecas, imagens externas ou servidor.
 
+Na seleção de personagem, escolha **Normal** ou **No hit** com clique/toque,
+ou pressione **D** para alternar. Em No hit, o jogador tem 1 de vida e qualquer
+acerto inimigo encerra a partida imediatamente, incluindo projéteis, contato
+e ataques de área dos chefes. Vida extra, cura, regeneração e redução de dano
+não aparecem nas melhorias, e baús concedem XP/armas sem curar. Reiniciar
+mantém a dificuldade escolhida; o objetivo continua sendo sobreviver 15 minutos.
+Verificação: `node tools/check_no_hit.cjs`.
+
+Cada partida dura no máximo **15 minutos (900 segundos) de jogo efetivo**.
+Pausa, escolha de melhorias e perguntas dos baús não consomem esse tempo.
+Ao atingir 15:00, a partida termina com vitória, mesmo com um chefe ativo;
+combate e geração de inimigos param, e tentar novamente reinicia o cronômetro.
+O HUD mostra o tempo decorrido e o limite. Teste do relógio e encerramento:
+`node tools/check_match_duration.cjs`.
+
+A redução de dano tem teto de **35%**. As armas chegam ao **nível 10**,
+com +10% do dano base por nível e recarga 3% mais rápida; esses aumentos de
+dano são aditivos. A dinamite começa com 50 de dano. Pólvora Fina concede
++5% de dano base global por escolha, até 10 escolhas (+50%); melhorias
+especiais de armas também têm limite de 10 escolhas cada. Evoluções não
+aumentam mais o dano global. Baús e cartas respeitam os mesmos limites.
+Verificação: `node tools/check_balance.cjs`.
+
+Inimigos e chefes sobem de nível a cada **5 minutos de jogo efetivo**:
+
+| Tempo | Nível | Vida | Dano | Resistência a dano | Projéteis por rajada |
+| --- | --- | --- | --- | --- | --- |
+| 0–4:59 | 1 | ×1 | ×1 | 0% | Padrão |
+| 5:00–9:59 | 2 | ×1,5 | ×1,35 | 15% | Padrão |
+| 10:00–14:59 | 3 | ×2 | ×1,7 | 30% | +1 |
+
+Os multiplicadores são aplicados sobre a progressão temporal existente. Inimigos já em
+campo também sobem de nível, mantendo a porcentagem de vida restante. A
+resistência reduz dano de armas e elementos; o aumento de dano vale para
+contato, projéteis e ataques de área de chefes. O projétil extra vale para
+inimigos que já disparam, por rajada, com avisos dos chefes correspondentes.
+O HUD mostra o nível dos inimigos. Aos 15 minutos, a partida termina.
+Verificação: `node tools/check_enemy_levels.cjs`.
+
 Agora possui **quatro árvores elementais** (Fogo, Gelo, Eletricidade e Veneno),
 com três melhorias cada, e **quatro sinergias selecionáveis**: Tempestade Infernal,
 Combustão Tóxica, Estilhaços Condutores e Praga Cristalizada. As cartas entram

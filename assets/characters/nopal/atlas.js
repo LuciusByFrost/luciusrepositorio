@@ -22,22 +22,24 @@ const NopalAtlas = {
                    ],
     "images":  {
                    "walk":  {
-                                "file":  "walk_normalized.png",
+                                "file":  "walk_normalized.a4fb4440c330.png",
                                 "size":  [
                                              768,
                                              1024
-                                         ]
+                                         ],
+                                "sha256":  "a4fb4440c3308f9846e4031bc5f51d380001cc5cc35602edc667d3457e6adf6f"
                             },
                    "attack":  {
-                                  "file":  "attack_normalized.png",
+                                  "file":  "attack_normalized.0003ac273af9.png",
                                   "size":  [
                                                512,
                                                1024
-                                           ]
+                                           ],
+                                  "sha256":  "0003ac273af989f7939d8c0d94fe5ace9e003c340daa8425aa92c1d6613cb2cc"
                               }
                },
     "walk":  {
-                 "fps":  10,
+                 "source":  "assets/characters/nopal/nopal_walk.png",
                  "idleColumns":  [
                                      0,
                                      0,
@@ -48,8 +50,6 @@ const NopalAtlas = {
                                      0,
                                      0
                                  ],
-                 "source":  "assets/characters/nopal/nopal_walk.png",
-                 "sourceSHA256":  "77299FA59E3D0940D79F9C46EA4AF733BB8DCD28E94E202B371EBB2A98C8D52E",
                  "rowMap":  [
                                 0,
                                 1,
@@ -61,6 +61,7 @@ const NopalAtlas = {
                                 7
                             ],
                  "columns":  6,
+                 "fps":  10,
                  "referenceBodyHeight":  165,
                  "frames":  [
                                 {
@@ -295,7 +296,7 @@ const NopalAtlas = {
                                     "column":  0
                                 },
                                 {
-                                    "scale":  0.3508771929824561,
+                                    "scale":  0.35087719298245612,
                                     "y":  128,
                                     "drawSize":  [
                                                      36,
@@ -460,7 +461,7 @@ const NopalAtlas = {
                                     "column":  5
                                 },
                                 {
-                                    "scale":  0.3508771929824561,
+                                    "scale":  0.35087719298245612,
                                     "y":  256,
                                     "drawSize":  [
                                                      38,
@@ -493,7 +494,7 @@ const NopalAtlas = {
                                     "column":  0
                                 },
                                 {
-                                    "scale":  0.3508771929824561,
+                                    "scale":  0.35087719298245612,
                                     "y":  256,
                                     "drawSize":  [
                                                      36,
@@ -691,7 +692,7 @@ const NopalAtlas = {
                                     "column":  0
                                 },
                                 {
-                                    "scale":  0.3614457831325301,
+                                    "scale":  0.36144578313253012,
                                     "y":  384,
                                     "drawSize":  [
                                                      37,
@@ -856,7 +857,7 @@ const NopalAtlas = {
                                     "column":  5
                                 },
                                 {
-                                    "scale":  0.3614457831325301,
+                                    "scale":  0.36144578313253012,
                                     "y":  512,
                                     "drawSize":  [
                                                      42,
@@ -1087,7 +1088,7 @@ const NopalAtlas = {
                                     "column":  0
                                 },
                                 {
-                                    "scale":  0.3614457831325301,
+                                    "scale":  0.36144578313253012,
                                     "y":  640,
                                     "drawSize":  [
                                                      40,
@@ -1384,7 +1385,7 @@ const NopalAtlas = {
                                     "column":  3
                                 },
                                 {
-                                    "scale":  0.3614457831325301,
+                                    "scale":  0.36144578313253012,
                                     "y":  768,
                                     "drawSize":  [
                                                      34,
@@ -1417,7 +1418,7 @@ const NopalAtlas = {
                                     "column":  4
                                 },
                                 {
-                                    "scale":  0.3614457831325301,
+                                    "scale":  0.36144578313253012,
                                     "y":  768,
                                     "drawSize":  [
                                                      34,
@@ -1647,10 +1648,15 @@ const NopalAtlas = {
                                                      ],
                                     "column":  5
                                 }
-                            ]
+                            ],
+                 "sourceSHA256":  "77299FA59E3D0940D79F9C46EA4AF733BB8DCD28E94E202B371EBB2A98C8D52E",
+                 "sourceSize":  [
+                                    1086,
+                                    1448
+                                ]
              },
     "attack":  {
-                   "fps":  12.5,
+                   "source":  "assets/characters/nopal/nopal_attack.png",
                    "idleColumns":  [
                                        0,
                                        0,
@@ -1661,8 +1667,6 @@ const NopalAtlas = {
                                        0,
                                        0
                                    ],
-                   "source":  "assets/characters/nopal/nopal_attack.png",
-                   "sourceSHA256":  "59DD4613FDE07A4865ED3CF307B6D9FEA577A670CEB3E6F47B0A8A4A6B20785C",
                    "rowMap":  [
                                   0,
                                   1,
@@ -1674,6 +1678,7 @@ const NopalAtlas = {
                                   7
                               ],
                    "columns":  4,
+                   "fps":  12.5,
                    "referenceBodyHeight":  131,
                    "frames":  [
                                   {
@@ -2732,6 +2737,11 @@ const NopalAtlas = {
                                                        ],
                                       "column":  3
                                   }
-                              ]
+                              ],
+                   "sourceSHA256":  "59DD4613FDE07A4865ED3CF307B6D9FEA577A670CEB3E6F47B0A8A4A6B20785C",
+                   "sourceSize":  [
+                                      887,
+                                      1774
+                                  ]
                }
 };

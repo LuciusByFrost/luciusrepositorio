@@ -325,11 +325,15 @@ const CactusHero = (() => {
   }
   ctx.restore();
  }
+ const missingSpriteWarnings=new Set();
  function draw(ctx,p,x,y,t){
-  if(typeof NopalSprite!=='undefined'&&NopalSprite.draw(ctx,p,x,y,t))return;
-  if(typeof RosaSprite!=='undefined'&&RosaSprite.draw(ctx,p,x,y,t))return;
-  if(typeof IrisSprite!=='undefined'&&IrisSprite.draw(ctx,p,x,y,t))return;
-  if(typeof BentoSprite!=='undefined'&&BentoSprite.draw(ctx,p,x,y,t))return;
+  const authored={nopal:typeof NopalSprite==='undefined'?null:NopalSprite,rosa:typeof RosaSprite==='undefined'?null:RosaSprite,bento:typeof BentoSprite==='undefined'?null:BentoSprite,iris:typeof IrisSprite==='undefined'?null:IrisSprite}[p.characterId];
+  if(authored){if(!authored.draw(ctx,p,x,y,t))drawUnavailableHero(ctx,p,x,y,authored);return}
+  if(typeof Image==='function'){
+   if(!missingSpriteWarnings.has(p.characterId)){console.error('[Cactus Survivors] Módulo de sprite ausente: '+p.characterId+'. Confira os scripts do index.html.');missingSpriteWarnings.add(p.characterId)}
+   if(typeof drawUnavailableHero==='function')drawUnavailableHero(ctx,p,x,y,null);
+   return;
+  }
   const a=pose(p,t),face=p.facing<0?-1:1,hero=CharacterRoster.get(p.characterId).id;
   ctx.save();ctx.imageSmoothingEnabled=false;ctx.translate(Math.round(x),Math.round(y));
   ctx.fillStyle='#10172099';ctx.fillRect(-14,17,28,5);ctx.fillRect(-18,18,36,3);

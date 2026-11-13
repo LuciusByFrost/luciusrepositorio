@@ -56,6 +56,7 @@ const BossSystem=(()=>{
   }
  }
  function fan(game,e,target,api,count,spread,speed,color,damage){
+  count+=e.extraProjectiles||0;
   const base=Math.atan2(target.y-e.y,target.x-e.x);
   for(let i=0;i<count;i++){
    if(game.hostile.length>=limits.hostile)break;
@@ -65,8 +66,9 @@ const BossSystem=(()=>{
   }
  }
  function tickHazards(game,api){
-  if(!game.bossHazards?.length)return;
+  if(game.completed||!game.bossHazards?.length)return;
   for(const h of game.bossHazards){
+   if(game.completed)return;
    if(h.done||h.owner.hp<=0||!game.enemies.includes(h.owner)||game.time-h.start<h.delay)continue;
    h.done=true;h.firedAt=game.time;
    const e=h.owner,enraged=e.hp<e.maxHp*.5;EnemySprites.cue(e,game.time,h.kind);
@@ -80,7 +82,7 @@ const BossSystem=(()=>{
    }else if(h.kind==='grave'){
     const minion=api.spawn(enraged?'armored':'gravedigger');
     if(minion){minion.x=h.x;minion.y=h.y}
-   }else if(Math.hypot(game.player.x-h.x,game.player.y-h.y)<h.r+game.player.r)api.hurt(h.kind==='mortar'?14:12);
+   }else if(Math.hypot(game.player.x-h.x,game.player.y-h.y)<h.r+game.player.r)api.hurt((h.kind==='mortar'?14:12)*(e.levelDamageMultiplier||1));
   }
   game.bossHazards=game.bossHazards.filter(h=>h.owner.hp>0&&game.enemies.includes(h.owner)&&(!h.done||game.time-h.firedAt<.3));
  }
@@ -95,7 +97,7 @@ const BossSystem=(()=>{
   const e=h.owner,angle=Math.atan2(h.y-e.y,h.x-e.x);
   if(h.kind==='charge')return {angle,length:185*.85,half:e.r+2};
   if(h.kind==='cannon'||h.kind==='storm_fan'){
-   const count=e.hp<e.maxHp*.5?5:3,spread=h.kind==='cannon'?.48:.95;
+   const count=(e.hp<e.maxHp*.5?5:3)+(e.extraProjectiles||0),spread=h.kind==='cannon'?.48:.95;
    return {length:(h.kind==='cannon'?245:205)*4,half:5,
     rays:Array.from({length:count},(_,i)=>angle+(i/(count-1)-.5)*spread)};
   }

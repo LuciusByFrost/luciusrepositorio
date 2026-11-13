@@ -1,0 +1,151 @@
+{
+  "entry": "http://127.0.0.1:50278/index.html",
+  "scripts": [
+    "http://127.0.0.1:50278/js/network_questions.js?v=1ca385db0ccd",
+    "http://127.0.0.1:50278/js/knowledge_chests.js?v=36ae1837695a",
+    "http://127.0.0.1:50278/js/characters.js?v=0403249a228d",
+    "http://127.0.0.1:50278/js/hero_sprite.js?v=9be5f12971d1",
+    "http://127.0.0.1:50278/assets/characters/nopal/atlas.js?v=f9db617f531f",
+    "http://127.0.0.1:50278/js/nopal_sprite.js?v=aa68fd04f9b2",
+    "http://127.0.0.1:50278/assets/characters/rosa/atlas.js?v=0603495db605",
+    "http://127.0.0.1:50278/js/rosa_sprite.js?v=4b9fb126db58",
+    "http://127.0.0.1:50278/assets/characters/bento/atlas.js?v=13d99570e133",
+    "http://127.0.0.1:50278/js/bento_sprite.js?v=91dee4334da2",
+    "http://127.0.0.1:50278/assets/characters/iris/atlas.js?v=35b7ec3ecb8e",
+    "http://127.0.0.1:50278/js/iris_sprite.js?v=542cecf246bf",
+    "http://127.0.0.1:50278/assets/weapons/atlas.js?v=117a889e0cb7",
+    "http://127.0.0.1:50278/js/weapon_sprites.js?v=5b3ad38270f2",
+    "http://127.0.0.1:50278/js/player_sprite.js?v=b60fff1ba753",
+    "http://127.0.0.1:50278/js/weapon_visuals.js?v=b6d52a4c3034",
+    "http://127.0.0.1:50278/js/elements.js?v=23c87957651c",
+    "http://127.0.0.1:50278/js/element_visuals.js?v=f722e1b346d9",
+    "http://127.0.0.1:50278/js/enemy_sprites.js?v=4d3e268b989d",
+    "http://127.0.0.1:50278/js/bosses.js?v=c27419164242",
+    "http://127.0.0.1:50278/js/chests.js?v=90a5de597657",
+    "http://127.0.0.1:50278/js/main.js?v=f0a5d3bc8518"
+  ],
+  "characters": [
+    {
+      "characterId": "nopal",
+      "state": "ready",
+      "ready": true,
+      "errors": {},
+      "images": [
+        {
+          "layer": "walk",
+          "url": "http://127.0.0.1:50278/assets/characters/nopal/walk_normalized.a4fb4440c330.png?v=a4fb4440c3308f9846e4031bc5f51d380001cc5cc35602edc667d3457e6adf6f",
+          "loaded": true,
+          "width": 768,
+          "height": 1024,
+          "source": "assets/characters/nopal/nopal_walk.png",
+          "sourceSHA256": "77299FA59E3D0940D79F9C46EA4AF733BB8DCD28E94E202B371EBB2A98C8D52E",
+          "sha256": "a4fb4440c3308f9846e4031bc5f51d380001cc5cc35602edc667d3457e6adf6f"
+        },
+        {
+          "layer": "attack",
+          "url": "http://127.0.0.1:50278/assets/characters/nopal/attack_normalized.0003ac273af9.png?v=0003ac273af989f7939d8c0d94fe5ace9e003c340daa8425aa92c1d6613cb2cc",
+          "loaded": true,
+          "width": 512,
+          "height": 1024,
+          "source": "assets/characters/nopal/nopal_attack.png",
+          "sourceSHA256": "59DD4613FDE07A4865ED3CF307B6D9FEA577A670CEB3E6F47B0A8A4A6B20785C",
+          "sha256": "0003ac273af989f7939d8c0d94fe5ace9e003c340daa8425aa92c1d6613cb2cc"
+        }
+      ]
+    },
+    {
+      "characterId": "rosa",
+      "state": "ready",
+      "ready": true,
+      "errors": {},
+      "images": [
+        {
+          "layer": "walk",
+          "url": "http://127.0.0.1:50278/assets/characters/rosa/walk_normalized.9ad7d5bb0cbc.png?v=9ad7d5bb0cbcac1b83dfbe891e8cf58945f408c0d2b13c1f565571fc6b4be3a7",
+          "loaded": true,
+          "width": 768,
+          "height": 1024,
+          "source": "assets/characters/rosa/rosa_walk.png",
+          "sourceSHA256": "6A10CF522EB1151C692A4E17312EB9C0DEBFBE5E0D804F41F4F77B00360C8948",
+          "sha256": "9ad7d5bb0cbcac1b83dfbe891e8cf58945f408c0d2b13c1f565571fc6b4be3a7"
+        },
+        {
+          "layer": "attack",
+          "url": "http://127.0.0.1:50278/assets/characters/rosa/attack_normalized.446e4ea69dd3.png?v=446e4ea69dd32d0b96d36c89f0b24ca0986ff5f129dbcaf21078b96ba2238b64",
+          "loaded": true,
+          "width": 512,
+          "height": 1024,
+          "source": "assets/characters/rosa/rosa_attack.png",
+          "sourceSHA256": "C6D5CB33A427D5FC4D95524BB4938128E626DAD15535121B687D2354B4107AB9",
+          "sha256": "446e4ea69dd32d0b96d36c89f0b24ca0986ff5f129dbcaf21078b96ba2238b64"
+        }
+      ]
+    },
+    {
+      "characterId": "bento",
+      "state": "ready",
+      "ready": true,
+      "errors": {},
+      "images": [
+        {
+          "layer": "walk",
+          "url": "http://127.0.0.1:50278/assets/characters/bento/walk_normalized.03e876f08190.png?v=03e876f08190ba136f64ca61afacd26c69716a9112f60d5a882cc1ce52265798",
+          "loaded": true,
+          "width": 768,
+          "height": 1024,
+          "source": "assets/characters/bento/bento_walk.png",
+          "sourceSHA256": "7C39F6990B62A71D61A53C961BE811661A2141441DC80A010C1DE50C6C444580",
+          "sha256": "03e876f08190ba136f64ca61afacd26c69716a9112f60d5a882cc1ce52265798"
+        },
+        {
+          "layer": "attack",
+          "url": "http://127.0.0.1:50278/assets/characters/bento/attack_normalized.ee7eeb309c31.png?v=ee7eeb309c313ce5b55019231b04d34309abe9eeff86470760ccdbf121b8885b",
+          "loaded": true,
+          "width": 512,
+          "height": 1024,
+          "source": "assets/characters/bento/bento_attack.png",
+          "sourceSHA256": "6D9B8FEF05AECE203C3C0F627DE588D1B1AD9EB2A88B50B76B650595CABE579D",
+          "sha256": "ee7eeb309c313ce5b55019231b04d34309abe9eeff86470760ccdbf121b8885b"
+        }
+      ]
+    },
+    {
+      "characterId": "iris",
+      "state": "ready",
+      "ready": true,
+      "errors": {},
+      "images": [
+        {
+          "layer": "walk",
+          "url": "http://127.0.0.1:50278/assets/characters/iris/walk_normalized.70fa75440cd0.png?v=70fa75440cd09b5f9e2d576815817b02fac8b129348843644126d595895f1673",
+          "loaded": true,
+          "width": 768,
+          "height": 1024,
+          "source": "assets/characters/iris/iris_walk.png",
+          "sourceSHA256": "A4EFC2F2EC266940821046634E04FE750A1224E617CBBDE4A59377BA7CFC3B89",
+          "sha256": "70fa75440cd09b5f9e2d576815817b02fac8b129348843644126d595895f1673"
+        },
+        {
+          "layer": "attack",
+          "url": "http://127.0.0.1:50278/assets/characters/iris/attack_normalized.b2fe103f0428.png?v=b2fe103f0428cd022416daee5e75357cb7916452f4c0dd4d58ae98cee9809261",
+          "loaded": true,
+          "width": 512,
+          "height": 1024,
+          "source": "assets/characters/iris/iris_attack.png",
+          "sourceSHA256": "82A9867F44954D857A9934B283D1233894A6FDD1AFE3171F449A7E05023EDBFE",
+          "sha256": "b2fe103f0428cd022416daee5e75357cb7916452f4c0dd4d58ae98cee9809261"
+        }
+      ]
+    }
+  ],
+  "drawn": [
+    "http://127.0.0.1:50278/assets/characters/nopal/walk_normalized.a4fb4440c330.png?v=a4fb4440c3308f9846e4031bc5f51d380001cc5cc35602edc667d3457e6adf6f",
+    "http://127.0.0.1:50278/assets/characters/rosa/walk_normalized.9ad7d5bb0cbc.png?v=9ad7d5bb0cbcac1b83dfbe891e8cf58945f408c0d2b13c1f565571fc6b4be3a7",
+    "http://127.0.0.1:50278/assets/characters/bento/walk_normalized.03e876f08190.png?v=03e876f08190ba136f64ca61afacd26c69716a9112f60d5a882cc1ce52265798",
+    "http://127.0.0.1:50278/assets/characters/iris/walk_normalized.70fa75440cd0.png?v=70fa75440cd09b5f9e2d576815817b02fac8b129348843644126d595895f1673",
+    "http://127.0.0.1:50278/assets/characters/nopal/attack_normalized.0003ac273af9.png?v=0003ac273af989f7939d8c0d94fe5ace9e003c340daa8425aa92c1d6613cb2cc",
+    "http://127.0.0.1:50278/assets/characters/rosa/attack_normalized.446e4ea69dd3.png?v=446e4ea69dd32d0b96d36c89f0b24ca0986ff5f129dbcaf21078b96ba2238b64",
+    "http://127.0.0.1:50278/assets/characters/bento/attack_normalized.ee7eeb309c31.png?v=ee7eeb309c313ce5b55019231b04d34309abe9eeff86470760ccdbf121b8885b",
+    "http://127.0.0.1:50278/assets/characters/iris/attack_normalized.b2fe103f0428.png?v=b2fe103f0428cd022416daee5e75357cb7916452f4c0dd4d58ae98cee9809261"
+  ]
+}

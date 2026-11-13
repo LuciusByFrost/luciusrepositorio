@@ -22,22 +22,24 @@ const RosaAtlas = {
                    ],
     "images":  {
                    "walk":  {
-                                "file":  "walk_normalized.png",
+                                "file":  "walk_normalized.9ad7d5bb0cbc.png",
                                 "size":  [
                                              768,
                                              1024
-                                         ]
+                                         ],
+                                "sha256":  "9ad7d5bb0cbcac1b83dfbe891e8cf58945f408c0d2b13c1f565571fc6b4be3a7"
                             },
                    "attack":  {
-                                  "file":  "attack_normalized.png",
+                                  "file":  "attack_normalized.446e4ea69dd3.png",
                                   "size":  [
                                                512,
                                                1024
-                                           ]
+                                           ],
+                                  "sha256":  "446e4ea69dd32d0b96d36c89f0b24ca0986ff5f129dbcaf21078b96ba2238b64"
                               }
                },
     "walk":  {
-                 "fps":  10,
+                 "source":  "assets/characters/rosa/rosa_walk.png",
                  "idleColumns":  [
                                      0,
                                      0,
@@ -48,8 +50,6 @@ const RosaAtlas = {
                                      0,
                                      0
                                  ],
-                 "source":  "assets/characters/rosa/rosa_walk.png",
-                 "sourceSHA256":  "6A10CF522EB1151C692A4E17312EB9C0DEBFBE5E0D804F41F4F77B00360C8948",
                  "rowMap":  [
                                 0,
                                 1,
@@ -61,6 +61,7 @@ const RosaAtlas = {
                                 7
                             ],
                  "columns":  6,
+                 "fps":  10,
                  "referenceBodyHeight":  141,
                  "frames":  [
                                 {
@@ -229,7 +230,7 @@ const RosaAtlas = {
                                     "column":  4
                                 },
                                 {
-                                    "scale":  0.3924050632911392,
+                                    "scale":  0.39240506329113922,
                                     "y":  0,
                                     "drawSize":  [
                                                      36,
@@ -262,7 +263,7 @@ const RosaAtlas = {
                                     "column":  5
                                 },
                                 {
-                                    "scale":  0.4246575342465753,
+                                    "scale":  0.42465753424657532,
                                     "y":  128,
                                     "drawSize":  [
                                                      40,
@@ -295,7 +296,7 @@ const RosaAtlas = {
                                     "column":  0
                                 },
                                 {
-                                    "scale":  0.4246575342465753,
+                                    "scale":  0.42465753424657532,
                                     "y":  128,
                                     "drawSize":  [
                                                      39,
@@ -328,7 +329,7 @@ const RosaAtlas = {
                                     "column":  1
                                 },
                                 {
-                                    "scale":  0.4246575342465753,
+                                    "scale":  0.42465753424657532,
                                     "y":  128,
                                     "drawSize":  [
                                                      40,
@@ -361,7 +362,7 @@ const RosaAtlas = {
                                     "column":  2
                                 },
                                 {
-                                    "scale":  0.4246575342465753,
+                                    "scale":  0.42465753424657532,
                                     "y":  128,
                                     "drawSize":  [
                                                      43,
@@ -394,7 +395,7 @@ const RosaAtlas = {
                                     "column":  3
                                 },
                                 {
-                                    "scale":  0.4246575342465753,
+                                    "scale":  0.42465753424657532,
                                     "y":  128,
                                     "drawSize":  [
                                                      41,
@@ -526,7 +527,7 @@ const RosaAtlas = {
                                     "column":  1
                                 },
                                 {
-                                    "scale":  0.4397163120567376,
+                                    "scale":  0.43971631205673761,
                                     "y":  256,
                                     "drawSize":  [
                                                      46,
@@ -559,7 +560,7 @@ const RosaAtlas = {
                                     "column":  2
                                 },
                                 {
-                                    "scale":  0.4397163120567376,
+                                    "scale":  0.43971631205673761,
                                     "y":  256,
                                     "drawSize":  [
                                                      47,
@@ -625,7 +626,7 @@ const RosaAtlas = {
                                     "column":  4
                                 },
                                 {
-                                    "scale":  0.4397163120567376,
+                                    "scale":  0.43971631205673761,
                                     "y":  256,
                                     "drawSize":  [
                                                      47,
@@ -691,7 +692,7 @@ const RosaAtlas = {
                                     "column":  0
                                 },
                                 {
-                                    "scale":  0.4626865671641791,
+                                    "scale":  0.46268656716417911,
                                     "y":  384,
                                     "drawSize":  [
                                                      43,
@@ -724,7 +725,7 @@ const RosaAtlas = {
                                     "column":  1
                                 },
                                 {
-                                    "scale":  0.4626865671641791,
+                                    "scale":  0.46268656716417911,
                                     "y":  384,
                                     "drawSize":  [
                                                      43,
@@ -757,7 +758,7 @@ const RosaAtlas = {
                                     "column":  2
                                 },
                                 {
-                                    "scale":  0.4626865671641791,
+                                    "scale":  0.46268656716417911,
                                     "y":  384,
                                     "drawSize":  [
                                                      45,
@@ -790,7 +791,7 @@ const RosaAtlas = {
                                     "column":  3
                                 },
                                 {
-                                    "scale":  0.4626865671641791,
+                                    "scale":  0.46268656716417911,
                                     "y":  384,
                                     "drawSize":  [
                                                      44,
@@ -856,7 +857,7 @@ const RosaAtlas = {
                                     "column":  5
                                 },
                                 {
-                                    "scale":  0.4397163120567376,
+                                    "scale":  0.43971631205673761,
                                     "y":  512,
                                     "drawSize":  [
                                                      37,
@@ -1054,7 +1055,7 @@ const RosaAtlas = {
                                     "column":  5
                                 },
                                 {
-                                    "scale":  0.4492753623188406,
+                                    "scale":  0.44927536231884058,
                                     "y":  640,
                                     "drawSize":  [
                                                      43,
@@ -1087,7 +1088,7 @@ const RosaAtlas = {
                                     "column":  0
                                 },
                                 {
-                                    "scale":  0.4626865671641791,
+                                    "scale":  0.46268656716417911,
                                     "y":  640,
                                     "drawSize":  [
                                                      43,
@@ -1120,7 +1121,7 @@ const RosaAtlas = {
                                     "column":  1
                                 },
                                 {
-                                    "scale":  0.4626865671641791,
+                                    "scale":  0.46268656716417911,
                                     "y":  640,
                                     "drawSize":  [
                                                      43,
@@ -1153,7 +1154,7 @@ const RosaAtlas = {
                                     "column":  2
                                 },
                                 {
-                                    "scale":  0.4626865671641791,
+                                    "scale":  0.46268656716417911,
                                     "y":  640,
                                     "drawSize":  [
                                                      45,
@@ -1186,7 +1187,7 @@ const RosaAtlas = {
                                     "column":  3
                                 },
                                 {
-                                    "scale":  0.4696969696969697,
+                                    "scale":  0.46969696969696972,
                                     "y":  640,
                                     "drawSize":  [
                                                      46,
@@ -1351,7 +1352,7 @@ const RosaAtlas = {
                                     "column":  2
                                 },
                                 {
-                                    "scale":  0.4492753623188406,
+                                    "scale":  0.44927536231884058,
                                     "y":  768,
                                     "drawSize":  [
                                                      48,
@@ -1384,7 +1385,7 @@ const RosaAtlas = {
                                     "column":  3
                                 },
                                 {
-                                    "scale":  0.4492753623188406,
+                                    "scale":  0.44927536231884058,
                                     "y":  768,
                                     "drawSize":  [
                                                      43,
@@ -1450,7 +1451,7 @@ const RosaAtlas = {
                                     "column":  5
                                 },
                                 {
-                                    "scale":  0.4305555555555556,
+                                    "scale":  0.43055555555555558,
                                     "y":  896,
                                     "drawSize":  [
                                                      45,
@@ -1483,7 +1484,7 @@ const RosaAtlas = {
                                     "column":  0
                                 },
                                 {
-                                    "scale":  0.4305555555555556,
+                                    "scale":  0.43055555555555558,
                                     "y":  896,
                                     "drawSize":  [
                                                      44,
@@ -1582,7 +1583,7 @@ const RosaAtlas = {
                                     "column":  3
                                 },
                                 {
-                                    "scale":  0.4305555555555556,
+                                    "scale":  0.43055555555555558,
                                     "y":  896,
                                     "drawSize":  [
                                                      43,
@@ -1647,10 +1648,15 @@ const RosaAtlas = {
                                                      ],
                                     "column":  5
                                 }
-                            ]
+                            ],
+                 "sourceSHA256":  "6A10CF522EB1151C692A4E17312EB9C0DEBFBE5E0D804F41F4F77B00360C8948",
+                 "sourceSize":  [
+                                    1254,
+                                    1254
+                                ]
              },
     "attack":  {
-                   "fps":  12.5,
+                   "source":  "assets/characters/rosa/rosa_attack.png",
                    "idleColumns":  [
                                        0,
                                        0,
@@ -1661,8 +1667,6 @@ const RosaAtlas = {
                                        0,
                                        0
                                    ],
-                   "source":  "assets/characters/rosa/rosa_attack.png",
-                   "sourceSHA256":  "C6D5CB33A427D5FC4D95524BB4938128E626DAD15535121B687D2354B4107AB9",
                    "rowMap":  [
                                   0,
                                   1,
@@ -1674,6 +1678,7 @@ const RosaAtlas = {
                                   7
                               ],
                    "columns":  4,
+                   "fps":  12.5,
                    "referenceBodyHeight":  145,
                    "frames":  [
                                   {
@@ -2732,6 +2737,11 @@ const RosaAtlas = {
                                                        ],
                                       "column":  3
                                   }
-                              ]
+                              ],
+                   "sourceSHA256":  "C6D5CB33A427D5FC4D95524BB4938128E626DAD15535121B687D2354B4107AB9",
+                   "sourceSize":  [
+                                      887,
+                                      1774
+                                  ]
                }
 };

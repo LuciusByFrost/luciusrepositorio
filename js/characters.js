@@ -24,22 +24,23 @@ const CharacterRoster=(()=>{
  function layout(W,H){
   const cols=(W>=1000&&H>=500)||(W>=540&&W>H*1.3&&H<500)?4:2,gap=W<600?8:14,pad=W<600?12:24;
   const width=Math.min(270,(W-pad*2-gap*(cols-1))/cols),rows=Math.ceil(list.length/cols);
-  const top=H*.2,bottom=Math.min(84,H*.17),height=Math.min(352,(H-top-bottom-gap*(rows-1))/rows);
+  const top=H*.2,bottom=Math.min(132,H*.29),height=Math.min(352,(H-top-bottom-gap*(rows-1))/rows);
   const left=(W-(cols*width+gap*(cols-1)))/2;
   return {columns:cols,cards:list.map((c,i)=>({x:left+(i%cols)*(width+gap),y:top+Math.floor(i/cols)*(height+gap),w:width,h:height,id:c.id})),
-   start:{x:W/2-108,y:H-Math.min(57,H*.12),w:216,h:Math.min(38,H*.08)},back:{x:12,y:10,w:106,h:30}};
+   start:{x:W/2-108,y:H-Math.min(57,H*.12),w:216,h:Math.min(38,H*.08)},back:{x:12,y:10,w:106,h:30},
+   difficulties:['normal','nohit'].map((id,i)=>({id,x:W/2-108+i*112,y:H-Math.min(57,H*.12)-46,w:104,h:30}))};
  }
  function inside(p,r){return p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h}
  function wrap(g,text,x,y,width,lineH,max){let line='',lines=[];
   for(const word of text.split(' ')){const next=line?line+' '+word:word;if(line&&g.measureText(next).width>width){lines.push(line);line=word}else line=next}
   if(line)lines.push(line);lines.slice(0,max).forEach((s,i)=>g.fillText(i===max-1&&lines.length>max?s+'…':s,x,y+lineH*i));return Math.min(lines.length,max)*lineH;
  }
- function draw(g,W,H,selected,preview,weapons,t){
+ function draw(g,W,H,selected,preview,weapons,t,difficulty='normal'){
   const l=layout(W,H);g.save();g.imageSmoothingEnabled=false;
   g.fillStyle='#191f28';g.fillRect(0,0,W,H);
   for(let i=0;i<6;i++){g.fillStyle=i%2?'#262b31':'#22272e';g.fillRect(i*W/6,H*.75+(i%3)*12,W/6,H*.25)}
   g.textAlign='center';g.fillStyle='#efd5a0';g.font=`bold ${Math.min(32,W*.055)}px Georgia`;g.fillText('ESCOLHA SEU FORASTEIRO',W/2,H*.09);
-  g.fillStyle='#b7b8ac';g.font=`${Math.min(14,W*.029)}px Georgia`;g.fillText('Uma arma inicial. Todas as builds continuam abertas.',W/2,H*.14);
+  g.fillStyle='#b7b8ac';g.font=`${Math.min(14,W*.029)}px Georgia`;g.fillText(difficulty==='nohit'?'NO HIT: um acerto fatal. Sem cura ou armadura.':'Uma arma inicial. Todas as builds continuam abertas.',W/2,H*.14);
   l.cards.forEach((r,i)=>{
    const c=list[i],picked=c.id===selected,compact=r.h<315||r.w<185,small=r.w<185,short=r.h<190;
    g.save();g.beginPath();g.rect(r.x,r.y,r.w,r.h);g.clip();
@@ -58,6 +59,12 @@ const CharacterRoster=(()=>{
    if(descY+16<r.h-8){g.fillStyle='#bdb8a8';g.font=`${small?11:12}px Georgia`;wrap(g,c.desc,r.x+r.w/2,r.y+descY,r.w-26,16,Math.min(3,Math.floor((r.h-descY-8)/16)))}
    g.restore();
   });
+  g.fillStyle='#b7b8ac';g.font='10px Georgia';g.fillText('D · DIFICULDADE',W/2,l.difficulties[0].y-7);
+  for(const r of l.difficulties){const picked=difficulty===r.id;
+   g.fillStyle=picked?'#b9985a':'#252b31';g.fillRect(r.x,r.y,r.w,r.h);
+   g.strokeStyle=picked?'#efd5a0':'#50534e';g.strokeRect(r.x,r.y,r.w,r.h);
+   g.fillStyle=picked?'#221f24':'#eee0bb';g.font='bold 13px Georgia';g.fillText(r.id==='nohit'?'NO HIT':'NORMAL',r.x+r.w/2,r.y+20);
+  }
   g.fillStyle='#b9985a';g.fillRect(l.start.x,l.start.y,l.start.w,l.start.h);g.fillStyle='#221f24';g.font='bold 15px Georgia';g.fillText('PARTIR · ENTER',W/2,l.start.y+l.start.h*.67);
   g.fillStyle='#8d917f';g.font='12px Georgia';g.fillText('ESC · VOLTAR',l.back.x+l.back.w/2,l.back.y+20);g.restore();
  }
