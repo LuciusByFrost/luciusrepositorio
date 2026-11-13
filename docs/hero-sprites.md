@@ -1,5 +1,11 @@
 # Novos sprites dos quatro personagens
 
+> Estado atual: os ataques foram identificados pelo ZIP aprovado; a aprovação
+> das caminhadas existentes ainda não pode ser comprovada neste workspace.
+> Consulte [o relatório de integração](character-sprite-integration.md) para
+> arquivos, hashes, validações atuais e pendências. As verificações de navegador
+> descritas abaixo são registros anteriores, não resultados desta sessão.
+
 As caminhadas foram encontradas em `C:/Users/user/Downloads`. Os quatro ataques foram conferidos novamente com `sprites_ataque_personagens.zip`, na raiz do projeto, extraído em uma pasta temporária. Os hashes SHA-256 dos quatro PNGs do ZIP são idênticos aos das folhas já instaladas. Os arquivos foram copiados para os caminhos ativos e os ataques normalizados e seus recortes foram reconstruídos, preservando as caminhadas e os demais ajustes locais. Não foi criada outra árvore de personagens.
 
 | Personagem | Caminhada de origem | Ataque de origem | Altura corporal no jogo |
@@ -19,8 +25,8 @@ As caminhadas foram encontradas em `C:/Users/user/Downloads`. Os quatro ataques 
 - `attack_normalized.<hash>.png`: 512×1024, quatro colunas e oito linhas.
 - `atlas.js`: formato de script clássico existente, agora versão 2, com os dois estados separados, dimensões, hashes, recortes de origem, landmarks corporais, escalas, deslocamentos e mapa das linhas.
 
-Os campos `walk.sourceSize` e `attack.sourceSize` registra explicitamente as dimensões reais da folha
-extraída: `[887,1774]` para os quatro personagens. A reconstrução parcial dos
+Os campos `walk.sourceSize` e `attack.sourceSize` registram explicitamente as dimensões reais das folhas.
+Os ataques usam `[887,1774]` para os quatro personagens; as caminhadas usam as dimensões da tabela acima. A reconstrução parcial dos
 ataques preserva os PNGs e todos os metadados de caminhada. Os testes também
 conferem o apoio e o topo corporal após escala, com tolerância de meio pixel
 pelo arredondamento, e a mudança de direção de caminhada durante o ataque.

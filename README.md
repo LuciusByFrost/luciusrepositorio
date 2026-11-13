@@ -218,3 +218,13 @@ Abra `tools/player-preview.generated.html` e use **Animar / pausar**. A galeria
 usa `tools/weapon-preview.js`, que não é carregado pelo jogo. Ela foi conferida
 no Chrome headless em poses estáticas e com animação habilitada, sem erros
 reportados. FPS de uma partida interativa com hordas ainda não foi medido.
+
+## Professor Isac
+
+Loja permanente, Bits e apresentador dos baús: veja [implementação, testes e arte pendente](docs/isac.md). Abra LOJA DO ISAC no menu ou pressione L. A folha aprovada de Isac ainda precisa ser fornecida; nenhum sprite substituto foi gerado.
+
+
+## Cenário do deserto
+
+A imagem aprovada agora acompanha a câmera em coordenadas do mundo, com extensão procedural sem limites. Veja [integração, testes e medições](docs/desert-background.md).
+

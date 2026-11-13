@@ -13,9 +13,9 @@ function fresh(){
  return g;
 }
 function key(key){f.dispatch('keydown',{key,code:key,preventDefault(){}})}
-let writes=0;
+let writes=0,isacWrites=0;
 const set=f.storage.set.bind(f.storage);
-f.storage.set=(...args)=>{writes++;return set(...args)};
+f.storage.set=(...args)=>{if(args[0]==='cactus-save')writes++;if(args[0]==='cactus-isac-save')isacWrites++;return set(...args)};
 
 // Before, exactly at, crossing, and already beyond the deadline.
 let g=fresh();g.time=899.5;p.update(.25);
@@ -29,17 +29,17 @@ for(const [start,dt] of [[899.75,.25],[899.99,.04],[900,0],[901,.01],[1250,.04]]
  g.shots=[{life:1}];g.hazards=[{t:0,delay:0}];
  g.spawn=0;g.nextBoss=0;g.nextKnowledgeChest=0;
  g.pendingUpgrades=2;g.choices=[{apply(){throw Error('late upgrade')}}];
- const hp=g.player.hp,kills=g.kills,before=writes;
+ const hp=g.player.hp,kills=g.kills,before=writes,bitsBefore=f.I.snapshot().bits,bitsWritesBefore=isacWrites;
  p.update(dt);
  assert.equal(g.time,900);assert.equal(g.completed,true);assert.equal(g.victory,true);
- assert.equal(p.screen,'dead');assert.equal(writes,before+1);
+ assert.equal(p.screen,'dead');assert.equal(writes,before+1);assert.equal(isacWrites,bitsWritesBefore+1);assert.equal(f.I.snapshot().bits,bitsBefore+150);
  assert.equal(g.player.hp,hp,'deadline must precede lethal attacks');
  assert.equal(g.kills,kills,'completion does not award an undefeated boss');
  assert.equal(g.boss,null);assert.equal(g.bossWave,false);
  for(const field of ['bossHazards','hostile','shots','hazards','choices'])assert.equal(g[field].length,0,field);
  assert.equal(g.pendingUpgrades,0);
  const final=snapshot();p.update(60);p.update(60);
- assert.equal(snapshot(),final);assert.equal(writes,before+1,'completion persisted twice');
+ assert.equal(snapshot(),final);assert.equal(writes,before+1,'completion persisted twice');assert.equal(isacWrites,bitsWritesBefore+1,'Bits awarded twice');assert.equal(f.I.snapshot().bits,bitsBefore+150);
  assert.equal(p.spawnEnemy('bandit'),null);
  p.shootHostile(boss,1,0);p.fireWeapon(g.weapons.revolver);
  p.hurtPlayer(1000);p.damageEnemy(boss,100000,false);

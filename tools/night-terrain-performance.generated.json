@@ -1,0 +1,137 @@
+{
+  "note": "Background draw-call timings and a 60-frame headless desktop run with 120 enemies/automatic combat; emulated mobile viewports are not physical mobile device measurements.",
+  "timings": [
+    {
+      "width": 1280,
+      "height": 800,
+      "region": "origin",
+      "opaque": true,
+      "medianMs": 0,
+      "p95Ms": 1.2000000476837158,
+      "smoothing": false
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "region": "chunk-edge",
+      "opaque": true,
+      "medianMs": 0,
+      "p95Ms": 1.0999999046325684,
+      "smoothing": false
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "region": "negative-corner",
+      "opaque": true,
+      "medianMs": 0,
+      "p95Ms": 0.7999999523162842,
+      "smoothing": false
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "region": "distant",
+      "opaque": true,
+      "medianMs": 0.09999990463256836,
+      "p95Ms": 1,
+      "smoothing": false
+    },
+    {
+      "width": 360,
+      "height": 640,
+      "region": "origin",
+      "opaque": true,
+      "medianMs": 0,
+      "p95Ms": 0.10000014305114746,
+      "smoothing": false
+    },
+    {
+      "width": 360,
+      "height": 640,
+      "region": "chunk-edge",
+      "opaque": true,
+      "medianMs": 0,
+      "p95Ms": 0.10000014305114746,
+      "smoothing": false
+    },
+    {
+      "width": 360,
+      "height": 640,
+      "region": "negative-corner",
+      "opaque": true,
+      "medianMs": 0,
+      "p95Ms": 0.10000014305114746,
+      "smoothing": false
+    },
+    {
+      "width": 360,
+      "height": 640,
+      "region": "distant",
+      "opaque": true,
+      "medianMs": 0,
+      "p95Ms": 0.10000014305114746,
+      "smoothing": false
+    },
+    {
+      "width": 640,
+      "height": 360,
+      "region": "origin",
+      "opaque": true,
+      "medianMs": 0,
+      "p95Ms": 0.10000014305114746,
+      "smoothing": false
+    },
+    {
+      "width": 640,
+      "height": 360,
+      "region": "chunk-edge",
+      "opaque": true,
+      "medianMs": 0,
+      "p95Ms": 0.09999990463256836,
+      "smoothing": false
+    },
+    {
+      "width": 640,
+      "height": 360,
+      "region": "negative-corner",
+      "opaque": true,
+      "medianMs": 0,
+      "p95Ms": 0.10000014305114746,
+      "smoothing": false
+    },
+    {
+      "width": 640,
+      "height": 360,
+      "region": "distant",
+      "opaque": true,
+      "medianMs": 0,
+      "p95Ms": 0.10000014305114746,
+      "smoothing": false
+    }
+  ],
+  "gameplay": [
+    {
+      "region": "origin",
+      "width": 1280,
+      "height": 800,
+      "fps": 60.00203396725314,
+      "medianUpdateDrawMs": 1,
+      "p95UpdateDrawMs": 2.0999999046325684,
+      "medianFrameIntervalMs": 16.699999999999818,
+      "enemies": 120,
+      "shots": 1
+    },
+    {
+      "region": "chunk-edge",
+      "width": 1280,
+      "height": 800,
+      "fps": 60.00203396725312,
+      "medianUpdateDrawMs": 1,
+      "p95UpdateDrawMs": 1.9000000953674316,
+      "medianFrameIntervalMs": 16.699999999999818,
+      "enemies": 120,
+      "shots": 1
+    }
+  ]
+}

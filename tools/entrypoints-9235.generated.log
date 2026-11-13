@@ -1,0 +1,21 @@
+[20376:3472:1113/171845.636:ERROR:components\os_crypt\async\browser\os_crypt_win.cc:63] Failed to encrypt: O sistema não pode encontrar o arquivo especificado. (0x2)
+[20376:10748:1113/171845.673:ERROR:chrome\installer\util\google_update_settings_win.cc:544] Failed opening key Software\Microsoft\EdgeUpdate\ClientStateMedium\{56EB18F8-B008-4CBD-B6D2-8C97FE7E9062} to set usagestats; result: 5
+[20376:10748:1113/171845.677:ERROR:chrome\installer\util\google_update_settings_win.cc:587] Failed opening key Software\Microsoft\EdgeUpdate\ClientStateMedium\{56EB18F8-B008-4CBD-B6D2-8C97FE7E9062} to set urlstats; result: 5
+[20376:12496:1113/171851.095:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:230] Encryption is not available.
+
+DevTools listening on ws://127.0.0.1:9235/devtools/browser/792abfdf-7aa3-4ed6-a517-f3127c9d2ff7
+[20376:3352:1113/171851.102:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:230] Encryption is not available.
+[20376:10748:1113/171851.242:ERROR:chrome\installer\util\google_update_settings_win.cc:544] Failed opening key Software\Microsoft\EdgeUpdate\ClientStateMedium\{56EB18F8-B008-4CBD-B6D2-8C97FE7E9062} to set usagestats; result: 5
+[20376:3472:1113/171851.243:ERROR:chrome\browser\ui\edge_window_tab_manager\api\wtm_interface_impl.cc:472] Failed to open registry key
+[20376:3472:1113/171851.244:ERROR:content\browser\gpu\gpu_process_host.cc:1097] GPU process exited unexpectedly: exit_code=-1073741790
+[20376:10748:1113/171851.245:ERROR:components\viz\host\persistent_cache_sandboxed_file_factory.cc:153] Failed to open persistent cache files in directory "C:\Users\lucia\AppData\Local\Temp\cactus-sprite-audit-9235\GPUPersistentCache\DawnGraphiteCache\OMXJKWSVDDS6L3YMYJJRNHVYDBSO7SEM", error: 0: O arquivo já está sendo usado por outro processo. (0x20)
+[20376:3472:1113/171851.324:ERROR:content\browser\gpu\gpu_process_host.cc:1097] GPU process exited unexpectedly: exit_code=-1073741790
+[20376:10748:1113/171851.357:ERROR:components\viz\host\persistent_cache_sandboxed_file_factory.cc:153] Failed to open persistent cache files in directory "C:\Users\lucia\AppData\Local\Temp\cactus-sprite-audit-9235\GPUPersistentCache\DawnGraphiteCache\OMXJKWSVDDS6L3YMYJJRNHVYDBSO7SEM", error: 0: O arquivo já está sendo usado por outro processo. (0x20)
+[20376:3472:1113/171851.371:ERROR:content\browser\gpu\gpu_process_host.cc:1097] GPU process exited unexpectedly: exit_code=-1073741790
+[20376:10748:1113/171851.374:ERROR:components\viz\host\persistent_cache_sandboxed_file_factory.cc:153] Failed to open persistent cache files in directory "C:\Users\lucia\AppData\Local\Temp\cactus-sprite-audit-9235\GPUPersistentCache\DawnGraphiteCache\OMXJKWSVDDS6L3YMYJJRNHVYDBSO7SEM", error: 0: O arquivo já está sendo usado por outro processo. (0x20)
+[20376:6452:1113/171851.401:ERROR:services\device\public\cpp\geolocation\system_geolocation_source_win.cc:124] Failed to create IAppCapability: Acesso negado. (0x80070005)
+[20376:3472:1113/171851.421:ERROR:content\browser\gpu\gpu_process_host.cc:1097] GPU process exited unexpectedly: exit_code=-1073741790
+[20376:3472:1113/171851.435:ERROR:content\browser\gpu\gpu_process_host.cc:1097] GPU process exited unexpectedly: exit_code=-1073741790
+[20376:12504:1113/171851.438:ERROR:components\viz\host\persistent_cache_sandboxed_file_factory.cc:153] Failed to open persistent cache files in directory "C:\Users\lucia\AppData\Local\Temp\cactus-sprite-audit-9235\GPUPersistentCache\DawnGraphiteCache\OMXJKWSVDDS6L3YMYJJRNHVYDBSO7SEM", error: 0: O arquivo já está sendo usado por outro processo. (0x20)
+[20376:3472:1113/171851.455:ERROR:content\browser\gpu\gpu_process_host.cc:1097] GPU process exited unexpectedly: exit_code=-1073741790
+[20376:3472:1113/171851.455:FATAL:content\browser\gpu\gpu_data_manager_impl_private.cc:404] GPU process isn't usable. Goodbye.

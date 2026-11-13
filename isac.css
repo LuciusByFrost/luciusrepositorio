@@ -1,0 +1,17 @@
+#isac-panel[hidden]{display:none}
+#isac-panel{position:absolute;inset:0;z-index:8;overflow:auto;background:#1e1719f5;padding:clamp(10px,3vw,32px);color:#ffedc7;font:17px/1.5 Georgia,serif;overscroll-behavior:contain}
+.isac-wood{max-width:1040px;margin:auto;padding:clamp(14px,3vw,32px);border:4px solid #c79250;background:repeating-linear-gradient(0deg,#503222 0,#503222 46px,#593926 47px,#3c281f 49px);box-shadow:inset 0 0 0 3px #291e1b,0 6px 24px #0008}
+.isac-wood h1{font-size:clamp(20px,3vw,30px);text-align:center;margin:0 0 20px;border-bottom:2px solid #68bcb0;padding-bottom:14px;color:#ffe0a0;letter-spacing:1px}
+.isac-wood h2{font-size:20px;margin:0 0 12px}.isac-wood p{overflow-wrap:anywhere}
+.isac-shop-header,.isac-quiz-body{display:grid;grid-template-columns:clamp(80px,19vw,190px) minmax(0,1fr);gap:clamp(12px,3vw,28px);align-items:start}
+.isac-portrait{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:12px 4px;border:2px solid #a67a42;background:#211f22;min-width:0;color:#e9c78d}
+.isac-portrait img{display:block;max-width:100%;height:auto;object-fit:contain;image-rendering:pixelated}.isac-portrait small{font-size:12px}
+.isac-balance{color:#83e4cc;font-weight:bold;font-size:22px}.isac-category,.isac-reward,.isac-help{color:#e7cd9e;font-size:15px}
+.isac-dialogue{padding:14px;border-left:4px solid #68bcb0;background:#271e1de6}
+.isac-upgrades{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0}.isac-upgrade{padding:18px;border:2px solid #ad7c45;background:#2b2021e8}.isac-upgrade h2{color:#ffdc92}
+.isac-wood button{font:inherit;font-weight:bold;min-height:48px;padding:12px 16px;border:2px solid #dcb879;border-radius:3px;background:#38281e;color:#fff0cc;cursor:pointer;touch-action:manipulation;white-space:normal;overflow-wrap:anywhere}
+.isac-wood button:hover,.isac-wood button:focus-visible{background:#59422c;outline:3px solid #78d4c2;outline-offset:2px}.isac-wood button:disabled{cursor:default;opacity:1;color:#e9d7b3}
+.isac-answers{display:grid;gap:12px;margin:20px 0}.isac-answers button{text-align:left;width:100%}.isac-answers .isac-correct{background:#224e3d;border-color:#82dca2}.isac-answers .isac-wrong{background:#69332b;border-color:#f7ac87}
+.isac-explanation,.isac-confirm{padding:12px;border:1px solid #b48b56;background:#201b1be6}.isac-confirm{margin-top:12px}.isac-confirm button{margin:4px}
+@media(max-width:600px){#isac-panel{padding:8px;font-size:16px}.isac-wood{padding:12px}.isac-upgrades{grid-template-columns:1fr}.isac-quiz-body{grid-template-columns:64px minmax(0,1fr);gap:12px}.isac-portrait{padding:8px 2px;font-size:13px}.isac-portrait small{font-size:11px}.isac-question h2{font-size:18px}.isac-wood button{padding:10px}.isac-wood h1{font-size:20px}}
+@media(prefers-reduced-motion:reduce){#isac-panel{scroll-behavior:auto}}
