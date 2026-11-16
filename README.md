@@ -1,5 +1,11 @@
 # Cactus Survivors: O Último Cacto do Oeste
 
+🎮 [Jogar agora no navegador](https://luciusbyfrost.github.io/luciusrepositorio/)
+
+## Trailer oficial
+
+[![Trailer de Cactus Survivors](https://img.youtube.com/vi/ltl8j-Of_Hs/hqdefault.jpg)](https://youtu.be/ltl8j-Of_Hs)
+
 Nove oponentes usam sprites PNG direcionais com caminhada e ataque; o Coveiro do Breu conserva sua arte procedural. Veja [integração, mapeamento e testes](docs/enemy-png-integration.md).
 
 Jogo de sobrevivência 2D feito com HTML, CSS e JavaScript puro. Não usa bibliotecas, imagens externas ou servidor.
@@ -222,9 +228,6 @@ reportados. FPS de uma partida interativa com hordas ainda não foi medido.
 ## Professor Isac
 
 Loja permanente, Bits e apresentador dos baús: veja [implementação, testes e arte pendente](docs/isac.md). Abra LOJA DO ISAC no menu ou pressione L. A folha aprovada de Isac ainda precisa ser fornecida; nenhum sprite substituto foi gerado.
-
-
-## Cenário do deserto
 
 A imagem aprovada agora acompanha a câmera em coordenadas do mundo, com extensão procedural sem limites. Veja [integração, testes e medições](docs/desert-background.md).
 
